@@ -1,3 +1,5 @@
 name = "aws-cheatsheet"
 compatibility_date = "2024-09-23"
-pages_build_output_dir = "out"
+
+[assets]
+directory = "./out"
