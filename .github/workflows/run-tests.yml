@@ -1,0 +1,69 @@
+name: Run Tests
+on:
+  pull_request:
+    types: [review_requested, synchronize, labeled]
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  run-tests:
+    if: |
+      (github.event_name == 'push') ||
+      (github.event.action == 'review_requested') ||
+      (github.event.action == 'labeled' && github.event.label.name == 'ci-testing') ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'ci-testing'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set 'ci-testing' label
+        if: github.event.action == 'review_requested'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ["ci-testing"]
+            })
+      
+      - name: Check for package.json
+        id: check_package
+        run: |
+          if [ -f package.json ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Set up Node.js
+        if: steps.check_package.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: "npm"
+      
+      - name: Install dependencies
+        if: steps.check_package.outputs.exists == 'true'
+        run: npm ci
+      
+      - name: Build and run tests
+        if: steps.check_package.outputs.exists == 'true'
+        run: |
+          npm run build --if-present
+          npm test
+      
+      - name: Skip message
+        if: steps.check_package.outputs.exists == 'false'
+        run: echo "⚠ No package.json found. Skipping test steps."

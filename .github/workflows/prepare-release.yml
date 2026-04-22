@@ -1,0 +1,57 @@
+name: Prepare Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+      - name: Ensure release branch exists
+        run: |
+          git fetch origin release 2>/dev/null || true
+          if ! git show-ref --verify --quiet refs/heads/release 2>/dev/null && ! git show-ref --verify --quiet refs/remotes/origin/release 2>/dev/null; then
+            echo "Release branch does not exist. Creating from main..."
+            git checkout -b release
+            git push origin release
+          else
+            echo "Release branch already exists."
+          fi
+
+      - name: Install git-pr-release
+        run: gem install --no-document git-pr-release
+      
+      - name: Create Release PR
+        run: |
+          # Run git-pr-release and capture output
+          output=$(git-pr-release --squashed 2>&1) || {
+            # If exit code is 1, check if it's the "no PRs" message
+            if echo "$output" | grep -q "No pull requests to be released"; then
+              echo "✅ No pull requests to be released - all changes are already in release branch"
+              exit 0
+            else
+              echo "$output"
+              exit 1
+            fi
+          }
+          echo "$output"
+        env:
+          GIT_PR_RELEASE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_PR_RELEASE_BRANCH_PRODUCTION: release
+          GIT_PR_RELEASE_BRANCH_STAGING: main
+          GIT_PR_RELEASE_LABELS: "release-candidate"
+          GIT_PR_RELEASE_TEMPLATE: .github/RELEASE_PR_TEMPLATE
+          TZ: Asia/Kuala_Lumpur

@@ -1,0 +1,85 @@
+name: CI
+
+on:
+    push:
+        branches: [main, develop]
+    pull_request:
+        branches: [main, develop]
+        types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18, 20, 22]
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Check for package.json
+              id: check_package
+              run: |
+                  if [ -f package.json ]; then
+                      echo "exists=true" >> $GITHUB_OUTPUT
+                  else
+                      echo "exists=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Set up Node.js ${{ matrix.node-version }}
+              if: steps.check_package.outputs.exists == 'true'
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "npm"
+
+            - name: Install dependencies
+              if: steps.check_package.outputs.exists == 'true'
+              run: npm ci
+
+            - name: Run linter
+              if: steps.check_package.outputs.exists == 'true'
+              run: npm run lint --if-present
+
+            - name: Run tests
+              if: steps.check_package.outputs.exists == 'true'
+              run: npm test
+
+            - name: Build
+              if: steps.check_package.outputs.exists == 'true'
+              run: npm run build --if-present
+
+            - name: Skip message
+              if: steps.check_package.outputs.exists == 'false'
+              run: echo "⚠ No package.json found. Skipping CI steps."
+
+    security:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Check for package.json
+              id: check_package
+              run: |
+                  if [ -f package.json ]; then
+                      echo "exists=true" >> $GITHUB_OUTPUT
+                  else
+                      echo "exists=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Run npm audit
+              if: steps.check_package.outputs.exists == 'true'
+              run: npm audit --audit-level=moderate
+
+            - name: Run Snyk security scan
+              if: steps.check_package.outputs.exists == 'true'
+              uses: snyk/actions/node@master
+              continue-on-error: true
+              env:
+                  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+            - name: Skip message
+              if: steps.check_package.outputs.exists == 'false'
+              run: echo "⚠ No package.json found. Skipping security checks."
+              

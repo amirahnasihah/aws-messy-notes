@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - release
+
+jobs:
+  deployment:
+    name: Deploy
+    # 'merged == true' to prevent from being triggered when PR is closed
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deployment
+        run: |
+          echo "Deployment pipeline here"
+
+  publish-release-note:
+    name: Publish release note
+    if: github.event.pull_request.merged == true
+    needs: deployment
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate CalVer version
+        id: calver
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Use Malaysia timezone (UTC+8)
+            const malaysiaTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Kuala_Lumpur"}));
+            const year = malaysiaTime.getFullYear().toString();
+            const month = (malaysiaTime.getMonth() + 1).toString().padStart(2, '0');
+            const day = malaysiaTime.getDate();
+            const week = Math.floor((day - 1) / 7) + 1;
+
+            let version = `${year}.${month}.week${week}`;
+            console.log(`Version set to ${version}`);
+
+            const { owner, repo } = context.repo;
+
+            const releases = await github.rest.repos.listReleases({
+              owner,
+              repo,
+              per_page: 50,
+            });
+
+            const tagLine = releases.data.find(release => release.tag_name.includes(version));
+            const count = tagLine ? Number(tagLine.tag_name.split('release')[1]) + 1 : 1;
+
+            version = `${version}.release${count}`;
+            const releaseNoteName = `${year}-${month} Week ${week}（Release No.${count}）`;
+            console.log(`Final Version set to ${version}`);
+            console.log(`Release Note Name set to ${releaseNoteName}`);
+
+            core.setOutput('version', version);
+            core.setOutput('release_note_name', releaseNoteName);
+
+      - uses: release-drafter/release-drafter@v6
+        with:
+          config-name: release-drafter-config.yml
+          tag: ${{ steps.calver.outputs.version }}
+          name: ${{ steps.calver.outputs.release_note_name }}
+          version: ${{ steps.calver.outputs.version }}
+          publish: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

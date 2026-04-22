@@ -1,0 +1,26 @@
+name: Agenda
+type: Agenda
+description: A clear guidance for discussions for weekly planning to organize this week's goals and challenges.
+title: Agenda for ***
+labels: ["agenda"]
+body:
+  - type: markdown
+    attributes:
+      value: "Weekly planning agenda"
+  - type: textarea
+    id: goals
+    attributes:
+      label: This week's goals
+      placeholder: "List the main goals for this week..."
+    validations:
+      required: true
+  - type: textarea
+    id: challenges
+    attributes:
+      label: Challenges or blockers
+      placeholder: "What challenges are we facing?"
+  - type: textarea
+    id: discussion-points
+    attributes:
+      label: Discussion points
+      placeholder: "Items that need team discussion..."

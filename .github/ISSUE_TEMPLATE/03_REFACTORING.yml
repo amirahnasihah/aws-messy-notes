@@ -1,0 +1,57 @@
+name: Refactoring
+type: Refactoring
+labels: ["refactoring"]
+title: Refactor ***
+description: A change made to existing code to improve its structure, readability, or maintainability without altering its behavior.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Write a concise and accurate title reflecting the purpose of this issue, and this doubles as the pull request title.
+
+        -----------------------------------------------
+
+  - type: textarea
+    id: requirement
+    attributes:
+      label: Requirement
+      description: Provide a short explanation of the necessity for this feature, including the background and awareness of the issues driving its development. Note that specifications and test plans should be detailed in the pull request.
+    validations:
+      required: true
+
+  - type: textarea
+    id: note
+    attributes:
+      label: Notes
+      description: Include additional information such as links to related issues or desired release dates.
+      value: |
+        #### Related Issues
+
+        1. (URL or issue no here)
+
+  - type: markdown
+    attributes:
+      value: |
+        -----------------------------------------------
+
+        ## Post-Issue Steps
+
+        ### 1. Set additional fields for GitHub Projects
+
+        For a repository with the initial setup completed, issues will be added and automatically linked to relevant projects. Before proceeding, ensure all fields are properly configured. For fields that require numeric input, follow these guidelines:
+
+        * Effort (person-days)
+          * Enter an estimated amount of time it would take an average developer participating in this project. Assume 1 person-day = 8 hours, with a minimum of 0.25 person-days (2 hours) and a maximum of 10 person-days (2 weeks). If it exceeds this range, consider splitting the issue.
+        * Difficulty
+          - 4 = High - Tasks where it's unclear where to start.
+          - 3 = Moderately High - Tasks requiring independent problem understanding and issue identification.
+          - 2 = Moderately Low - Tasks that can be clarified through investigation or understanding specifications.
+          - 1 = Low - Tasks where what needs to be done is already clear.
+
+        ### 2. Assign a responsible developer
+
+        By setting assignee to the issue, automatically triggers the GitHub Action creating a pull request linked to the issue. Typically, development continues by checking out the branch associated with this pull request.
+
+        ### 3. Write specification and test plan
+
+        These should be documented in the pull request (not the issue).

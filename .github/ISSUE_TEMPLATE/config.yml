@@ -1,0 +1,7 @@
+# .github/ISSUE_TEMPLATE/config.yml
+
+blank_issues_enabled: false
+contact_links:
+  - name: Questions or Support
+    url: https://github.com/doktahoo/template-tutorial/discussions
+    about: Please ask general questions or request help in Discussions instead of creating an issue.

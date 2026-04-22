@@ -1,0 +1,22 @@
+categories:
+  - title: 'Addition'
+    labels:
+      - 'addition'
+  - title: 'Agenda'
+    labels:
+      - 'agenda'
+  - title: 'Modification'
+    labels:
+      - 'modification'
+  - title: 'Refactoring'
+    labels:
+      - 'refactoring'
+  - title: 'Fix'
+    labels:
+      - 'fix'
+change-template: '- $TITLE (#$NUMBER)'
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+template: |
+  This release includes the following changes:
+
+  $CHANGES
