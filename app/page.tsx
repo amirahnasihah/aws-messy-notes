@@ -2,11 +2,12 @@ import { domains } from '@/data/awsServices'
 import Nav from '@/components/Nav'
 import DomainHeader from '@/components/DomainHeader'
 import Section from '@/components/Section'
+import Link from 'next/link'
 
 export default function Home() {
   return (
     <>
-      <Nav />
+      <Nav activePage="cheatsheet" />
 
       <main id="top" className="max-w-[920px] mx-auto px-4 pt-[calc(3.5rem+1.5rem)] pb-16">
         {domains.map((domain, index) => (
@@ -25,8 +26,13 @@ export default function Home() {
           </div>
         ))}
 
-        <footer className="text-center font-space-mono text-[0.65rem] text-aws-muted pt-6 border-t border-aws-border">
-          AWS SAA-C03 · Domain 3 &amp; 4 · Study Reference · Good luck! 💪
+        <footer className="text-center font-space-mono text-[0.65rem] text-aws-muted pt-6 border-t border-aws-border space-y-2">
+          <p>AWS SAA-C03 · All 4 Domains · Study Reference · Good luck! 💪</p>
+          <p>
+            <Link href="/learn" className="text-c1 hover:text-aws-text transition-colors underline underline-offset-2">
+              → Deep Notes: detailed explanations
+            </Link>
+          </p>
         </footer>
       </main>
     </>
