@@ -5,6 +5,16 @@ interface DomainHeaderProps {
 }
 
 const variantStyles = {
+  d1: {
+    wrapper: 'bg-gradient-to-br from-c3/8 to-c6/8 border-c3/15',
+    badge: 'bg-gradient-to-br from-c3 to-c6 text-white',
+    heading: 'from-white/90 to-c3',
+  },
+  d2: {
+    wrapper: 'bg-gradient-to-br from-c2/8 to-c5/8 border-c2/15',
+    badge: 'bg-gradient-to-br from-c2 to-c5 text-black',
+    heading: 'from-white/90 to-c2',
+  },
   d3: {
     wrapper: 'bg-gradient-to-br from-c1/8 to-c3/8 border-c1/15',
     badge: 'bg-gradient-to-br from-c1 to-c3 text-black',

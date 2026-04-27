@@ -8,6 +8,13 @@ export type ColorCategory =
   | 'd4store'
   | 'd4net'
   | 'd4db'
+  | 'd1iam'
+  | 'd1net'
+  | 'd1data'
+  | 'd1connect'
+  | 'd2ha'
+  | 'd2dr'
+  | 'd2backup'
 
 export interface ServiceCard {
   shortName: string
@@ -34,7 +41,7 @@ export interface DomainData {
   badge: string
   title: string
   subtitle: string
-  variant: 'd3' | 'd4'
+  variant: 'd1' | 'd2' | 'd3' | 'd4'
   sections: SectionData[]
 }
 
@@ -51,9 +58,315 @@ export const categoryStyles: Record<
   d4store:   { title: 'text-c2', accent: 'bg-c2',  keyword: 'text-c2 border-c2/20 bg-c2/5',   nav: 'text-c2 border-c2/20',   scenario: 'bg-c6/5 border-c6/15' },
   d4net:     { title: 'text-c4', accent: 'bg-c4',  keyword: 'text-c4 border-c4/20 bg-c4/5',   nav: 'text-c4 border-c4/20',   scenario: 'bg-c6/5 border-c6/15' },
   d4db:      { title: 'text-c1', accent: 'bg-c1',  keyword: 'text-c1 border-c1/20 bg-c1/5',   nav: 'text-c1 border-c1/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d1iam:     { title: 'text-c3', accent: 'bg-c3',  keyword: 'text-c3 border-c3/20 bg-c3/5',   nav: 'text-c3 border-c3/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d1net:     { title: 'text-c4', accent: 'bg-c4',  keyword: 'text-c4 border-c4/20 bg-c4/5',   nav: 'text-c4 border-c4/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d1data:    { title: 'text-c6', accent: 'bg-c6',  keyword: 'text-c6 border-c6/20 bg-c6/5',   nav: 'text-c6 border-c6/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d1connect: { title: 'text-c1', accent: 'bg-c1',  keyword: 'text-c1 border-c1/20 bg-c1/5',   nav: 'text-c1 border-c1/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d2ha:      { title: 'text-c2', accent: 'bg-c2',  keyword: 'text-c2 border-c2/20 bg-c2/5',   nav: 'text-c2 border-c2/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d2dr:      { title: 'text-c5', accent: 'bg-c5',  keyword: 'text-c5 border-c5/20 bg-c5/5',   nav: 'text-c5 border-c5/20',   scenario: 'bg-c6/5 border-c6/15' },
+  d2backup:  { title: 'text-c4', accent: 'bg-c4',  keyword: 'text-c4 border-c4/20 bg-c4/5',   nav: 'text-c4 border-c4/20',   scenario: 'bg-c6/5 border-c6/15' },
 }
 
 export const domains: DomainData[] = [
+  {
+    id: 'domain1',
+    badge: 'DOMAIN 1 · 30% OF EXAM',
+    title: 'Design Secure Architectures',
+    subtitle: 'IAM & Identity · Network Security · Data Protection · Connectivity',
+    variant: 'd1',
+    sections: [
+      {
+        id: 'd1-iam',
+        icon: '🔑',
+        title: 'IAM & Identity',
+        category: 'd1iam',
+        services: [
+          {
+            shortName: 'IAM',
+            fullName: 'AWS Identity and Access Management',
+            ingat: '"Siapa boleh buat apa dalam AWS"',
+            gunaUntuk: 'Control who can access what AWS resources',
+            fungsi: 'Mengurus identiti dan akses kepada perkhidmatan dan sumber AWS dengan policies',
+            contohGuna: 'Create IAM Role untuk EC2 boleh read S3 — attach role ke EC2, bukan hardcode credentials dalam code',
+            keywords: ['users', 'groups', 'roles', 'policies', 'least privilege', 'MFA'],
+          },
+          {
+            shortName: 'STS',
+            fullName: 'AWS Security Token Service',
+            ingat: '"Pinjam IC sementara"',
+            gunaUntuk: 'Generate temporary security credentials',
+            fungsi: 'Menyediakan credentials sementara (access key, secret key, session token) untuk access AWS resources',
+            contohGuna: 'Developer nak test dengan AWS account lain — AssumeRole via STS, dapat temp credentials tanpa perlu IAM user baru',
+            keywords: ['temporary credentials', 'AssumeRole', 'cross-account', 'federation'],
+          },
+          {
+            shortName: 'IAM Identity Center',
+            fullName: 'AWS IAM Identity Center (SSO)',
+            ingat: '"Satu login, semua AWS accounts"',
+            gunaUntuk: 'Centralized SSO untuk multiple AWS accounts',
+            fungsi: 'Membolehkan pengguna login sekali dan access multiple AWS accounts dan business applications',
+            contohGuna: 'Staff login dengan corporate email (Microsoft AD / Okta), dapat access semua 10 AWS accounts yang dibenarkan tanpa login semula',
+            keywords: ['SSO', 'single sign-on', 'multiple accounts', 'federation', 'SAML 2.0'],
+          },
+          {
+            shortName: 'AWS Organizations',
+            fullName: 'AWS Organizations + Control Tower + SCPs',
+            ingat: '"HQ yang kawal semua anak syarikat"',
+            gunaUntuk: 'Manage multiple AWS accounts centrally with guardrails',
+            fungsi: 'Mengurus pelbagai AWS accounts dalam satu organisasi dengan Service Control Policies (SCPs) sebagai guardrails',
+            contohGuna: 'Prevent semua dev accounts dari disable CloudTrail — SCP: Deny cloudtrail:StopLogging. Control Tower automate setup multi-account environment',
+            keywords: ['multi-account', 'SCPs', 'guardrails', 'Control Tower', 'management account', 'OU'],
+          },
+        ],
+      },
+      {
+        id: 'd1-netsec',
+        icon: '🛡️',
+        title: 'Network Security',
+        category: 'd1net',
+        services: [
+          {
+            shortName: 'Security Groups',
+            fullName: 'VPC Security Groups',
+            ingat: '"Bodyguard EC2 — ingat siapa dia bagi masuk"',
+            gunaUntuk: 'Instance-level firewall, stateful',
+            fungsi: 'Mengawal inbound dan outbound traffic pada peringkat EC2 instance secara stateful — balas automatically dibenarkan',
+            contohGuna: 'Web server SG: allow 443 dari 0.0.0.0/0. DB SG: allow 3306 dari Web Server SG je — bukan dari internet',
+            keywords: ['stateful', 'instance-level', 'inbound rules', 'allow only', 'default deny'],
+          },
+          {
+            shortName: 'NACLs',
+            fullName: 'Network Access Control Lists',
+            ingat: '"Guard kat pintu masuk subnet — check both ways"',
+            gunaUntuk: 'Subnet-level firewall, stateless, boleh block IP',
+            fungsi: 'Mengawal traffic masuk dan keluar subnet secara stateless — kena ada rule eksplisit untuk inbound DAN outbound',
+            contohGuna: 'Block IP range 192.168.1.0/24 dari masuk subnet — tambah DENY rule dalam NACL (Security Groups tak boleh explicitly deny)',
+            keywords: ['stateless', 'subnet-level', 'allow & deny', 'numbered rules', 'explicit both ways'],
+          },
+          {
+            shortName: 'WAF',
+            fullName: 'AWS Web Application Firewall',
+            ingat: '"Penapis website dari serangan Layer 7"',
+            gunaUntuk: 'Protect against SQL injection, XSS, rate limiting',
+            fungsi: 'Menapis requests HTTP/HTTPS berbahaya sebelum sampai ke aplikasi dengan rules dan managed rule groups',
+            contohGuna: 'API kena SQL injection attack — deploy WAF dengan AWS Managed Rules kat ALB atau CloudFront. Boleh rate limit 1000 req/IP per minit',
+            keywords: ['Layer 7', 'SQL injection', 'XSS', 'rate limiting', 'managed rules', 'ALB', 'CloudFront'],
+          },
+          {
+            shortName: 'AWS Shield',
+            fullName: 'AWS Shield Standard & Advanced',
+            ingat: '"Pelindung DDoS — Standard free, Advanced bayar"',
+            gunaUntuk: 'DDoS protection Layer 3/4 (Standard) and Layer 7 (Advanced)',
+            fungsi: 'Melindungi dari serangan DDoS — Standard free untuk semua, Advanced untuk protection 24/7 + DDoS Response Team',
+            contohGuna: 'Website kena volumetric DDoS — Shield Standard protect automatically. Enterprise nak protection + cost protection + DRT = Shield Advanced',
+            keywords: ['DDoS', 'Layer 3/4', 'Shield Standard', 'Shield Advanced', 'DRT', 'always-on'],
+          },
+          {
+            shortName: 'Network Firewall',
+            fullName: 'AWS Network Firewall',
+            ingat: '"Polis traffic dalam VPC — deep inspection"',
+            gunaUntuk: 'VPC-level stateful deep packet inspection, domain filtering',
+            fungsi: 'Menyediakan firewall managed untuk inspect dan filter traffic dalam VPC dengan stateful rules dan intrusion prevention',
+            contohGuna: 'Company policy semua outbound traffic kena inspect untuk block malicious domains — deploy Network Firewall kat centralized VPC, route semua traffic melaluinya',
+            keywords: ['deep packet inspection', 'stateful', 'VPC-level', 'intrusion prevention', 'domain filtering'],
+          },
+        ],
+      },
+      {
+        id: 'd1-data',
+        icon: '🔐',
+        title: 'Data Protection',
+        category: 'd1data',
+        services: [
+          {
+            shortName: 'KMS',
+            fullName: 'AWS Key Management Service',
+            ingat: '"Simpan dan urus kunci enkripsi"',
+            gunaUntuk: 'Encrypt data at rest, manage encryption keys',
+            fungsi: 'Mencipta dan mengurus cryptographic keys untuk encrypt/decrypt data di pelbagai AWS services',
+            contohGuna: 'Encrypt S3, RDS, EBS — enable SSE-KMS. Semua penggunaan key di-audit dalam CloudTrail. KMS key rotation auto setahun sekali',
+            keywords: ['encryption at rest', 'CMK', 'key rotation', 'SSE-KMS', 'envelope encryption', 'CloudTrail audit'],
+          },
+          {
+            shortName: 'Secrets Manager',
+            fullName: 'AWS Secrets Manager',
+            ingat: '"Simpan password apps, auto-rotate"',
+            gunaUntuk: 'Store dan auto-rotate credentials, API keys, DB passwords',
+            fungsi: 'Menyimpan, mendapatkan semula dan memutar rahsia secara automatik tanpa perlu update aplikasi',
+            contohGuna: 'Lambda function perlu DB password — jangan letak dalam env var atau code. Store dalam Secrets Manager, Lambda retrieve masa runtime. Auto-rotate setiap 30 hari',
+            keywords: ['auto-rotation', 'credentials', 'API keys', 'no hardcoded secrets', 'Lambda integration'],
+          },
+          {
+            shortName: 'S3 Object Lock',
+            fullName: 'Amazon S3 Object Lock',
+            ingat: '"Lock file — tak boleh delete atau ubah (WORM)"',
+            gunaUntuk: 'WORM compliance, prevent deletion/modification',
+            fungsi: 'Menghalang objek S3 dari dihapuskan atau diubah suai dalam tempoh tertentu untuk pematuhan kawal selia',
+            contohGuna: 'Financial records kena simpan 7 tahun tak boleh diubah — enable Object Lock Compliance mode. Governance mode untuk internal policy yang admin boleh override',
+            keywords: ['WORM', 'compliance', 'retention period', 'Governance mode', 'Compliance mode', 'legal hold'],
+          },
+        ],
+      },
+      {
+        id: 'd1-connect',
+        icon: '🔗',
+        title: 'Connectivity',
+        category: 'd1connect',
+        services: [
+          {
+            shortName: 'Direct Connect',
+            fullName: 'AWS Direct Connect',
+            ingat: '"Kabel terus ke AWS — private dedicated lane"',
+            gunaUntuk: 'Private dedicated connection from on-premises to AWS',
+            fungsi: 'Menyediakan sambungan jaringan peribadi yang berdedikasi antara data center on-premises dengan AWS',
+            contohGuna: 'Company transfer 100TB data sebulan dari on-prem ke AWS — Direct Connect lebih murah (no internet data transfer charges), consistent latency berbanding internet',
+            keywords: ['dedicated connection', 'private', 'consistent latency', '1Gbps/10Gbps', 'no internet'],
+          },
+          {
+            shortName: 'Site-to-Site VPN',
+            fullName: 'AWS Site-to-Site VPN',
+            ingat: '"Tunnel rahsia ke AWS, guna internet biasa"',
+            gunaUntuk: 'Encrypted IPSec tunnel from on-premises to VPC over internet',
+            fungsi: 'Mewujudkan sambungan VPN yang disulitkan antara on-premises network dengan AWS VPC menggunakan internet sedia ada',
+            contohGuna: 'Small office nak access resources dalam VPC secara selamat — setup Site-to-Site VPN. Lebih murah dan cepat setup dari Direct Connect tapi latency tak konsisten',
+            keywords: ['IPSec', 'encrypted', 'internet-based', 'Virtual Private Gateway', 'quick setup', 'cost-effective'],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'domain2',
+    badge: 'DOMAIN 2 · 26% OF EXAM',
+    title: 'Design Resilient Architectures',
+    subtitle: 'High Availability · Disaster Recovery · Backup & Storage Resilience',
+    variant: 'd2',
+    sections: [
+      {
+        id: 'd2-ha',
+        icon: '⚡',
+        title: 'High Availability & Scaling',
+        category: 'd2ha',
+        services: [
+          {
+            shortName: 'Auto Scaling Groups',
+            fullName: 'Amazon EC2 Auto Scaling',
+            ingat: '"Auto tambah/kurang server ikut demand"',
+            gunaUntuk: 'Automatically scale EC2 instances based on load',
+            fungsi: 'Menambah atau mengurangkan bilangan EC2 instances secara automatik berdasarkan policies, schedules, atau metrics',
+            scenario: 'E-commerce traffic spike masa sale event — ASG scale out bila CPU >70%, tambah EC2 instances automatik. Bila traffic turun, scale in untuk jimat kos. Set minimum=2 untuk high availability.',
+            keywords: ['horizontal scaling', 'scale out/in', 'launch template', 'scaling policies', 'desired capacity', 'min/max'],
+          },
+          {
+            shortName: 'RDS Multi-AZ',
+            fullName: 'Amazon RDS Multi-AZ Deployment',
+            ingat: '"Backup database sedia tunggu dalam AZ lain"',
+            gunaUntuk: 'High availability for RDS — automatic failover',
+            fungsi: 'Menyimpan satu salinan database standby dalam Availability Zone berbeza yang akan take over secara automatik jika primary fail',
+            scenario: 'Production RDS kat AZ-1 fail — automatic failover ke standby kat AZ-2 dalam 1-2 minit. Same connection endpoint, app tak perlu tukar config. BUKAN untuk scale reads — guna Read Replicas untuk tu.',
+            keywords: ['automatic failover', 'standby', 'different AZ', 'sync replication', 'same endpoint', 'HA only'],
+          },
+          {
+            shortName: 'RDS Read Replicas',
+            fullName: 'Amazon RDS Read Replicas',
+            ingat: '"Photocopy database untuk baca je"',
+            gunaUntuk: 'Scale read traffic, offload reporting queries from primary',
+            fungsi: 'Mencipta salinan database read-only untuk mengagihkan beban queries baca dari database utama',
+            scenario: 'Reporting dashboard slow down production RDS — create Read Replica, point reporting app ke replica. Primary DB hanya handle writes. Boleh create up to 15 replicas, cross-region pun boleh.',
+            keywords: ['read scaling', 'async replication', 'reporting', 'cross-region', 'up to 15 replicas', 'read-only'],
+          },
+          {
+            shortName: 'Global Accelerator',
+            fullName: 'AWS Global Accelerator',
+            ingat: '"Highway AWS untuk user seluruh dunia"',
+            gunaUntuk: 'Route global users to nearest healthy endpoint via AWS backbone',
+            fungsi: 'Menggunakan AWS global network untuk route traffic ke endpoint yang paling dekat dan sihat, bukan melalui internet awam',
+            scenario: 'App dengan users dari US dan Asia — Global Accelerator route via AWS backbone (bukan public internet), lagi laju. Kalau satu region fail, auto-failover ke region lain dalam <30 saat. Beza dengan CloudFront: GA untuk TCP/UDP apps, bukan static content caching.',
+            keywords: ['global routing', 'AWS backbone', 'anycast', 'static IP', 'TCP/UDP', 'failover <30s'],
+          },
+        ],
+      },
+      {
+        id: 'd2-dr',
+        icon: '🔄',
+        title: 'Disaster Recovery Patterns',
+        category: 'd2dr',
+        services: [
+          {
+            shortName: 'Backup & Restore',
+            fullName: 'DR Pattern: Backup & Restore',
+            ingat: '"Save game — kalau rosak restore dari backup"',
+            gunaUntuk: 'Non-critical systems, lowest cost DR strategy',
+            fungsi: 'Strategi DR paling asas — backup data ke S3/Glacier, restore bila diperlukan. Tiada infrastruktur standby di DR region',
+            scenario: 'Non-critical archival system — backup snapshots ke S3/Glacier regularly. RPO: hours/days. RTO: hours. Paling murah tapi paling lambat recover. Guna bila downtime beberapa jam boleh diterima.',
+            keywords: ['RPO: hours/days', 'RTO: hours', 'lowest cost', 'no standby infra', 'S3/Glacier backup'],
+          },
+          {
+            shortName: 'Pilot Light',
+            fullName: 'DR Pattern: Pilot Light',
+            ingat: '"Api kecil sedia — boleh bakar besar bila perlu"',
+            gunaUntuk: 'Core DB running in DR region, app servers off until needed',
+            fungsi: 'Hanya core components (database) yang running kat DR region scaled down. App servers dilancarkan hanya bila disaster berlaku',
+            scenario: 'Core DB replicated ke DR region (running minimal). App servers OFF. Disaster berlaku — turn on app servers, scale up, point DNS ke DR. RPO: minutes, RTO: minutes to hours. Lebih murah dari Warm Standby.',
+            keywords: ['RPO: minutes', 'RTO: minutes-hours', 'core DB running', 'app servers off', 'medium cost'],
+          },
+          {
+            shortName: 'Warm Standby',
+            fullName: 'DR Pattern: Warm Standby',
+            ingat: '"Anak syarikat kecil sedia — scale up masa emergency"',
+            gunaUntuk: 'Scaled-down full stack running in DR, quick scale up',
+            fungsi: 'Versi scaled-down penuh dari aplikasi running di DR region. Boleh handle traffic pada kapasiti rendah, scale up bila failover diperlukan',
+            scenario: 'DR region running dengan 2 EC2 (vs 20 in prod). Disaster — scale up ASG, Route 53 failover ke DR. RPO: seconds/minutes, RTO: minutes. Lebih mahal dari Pilot Light tapi lagi cepat recover.',
+            keywords: ['RPO: seconds/minutes', 'RTO: minutes', 'scaled-down active', 'quick scale up', 'higher cost'],
+          },
+          {
+            shortName: 'Multi-Site Active/Active',
+            fullName: 'DR Pattern: Multi-Site Active/Active',
+            ingat: '"Dua HQ berjalan serentak — saling backup"',
+            gunaUntuk: 'Mission-critical — full capacity in both regions simultaneously',
+            fungsi: 'Kedua-dua regions running full capacity serentak dengan traffic diagihkan. Tiada downtime bila satu region fail',
+            scenario: 'Banking app yang tak boleh ada downtime — full production environment kat dua regions. Route 53 weighted routing 50/50. Satu region fail → 100% traffic ke region sihat automatik. RPO: near-zero, RTO: seconds. Paling mahal tapi paling reliable.',
+            keywords: ['RPO: near-zero', 'RTO: seconds', 'full capacity both', 'highest cost', 'mission-critical', 'zero downtime'],
+          },
+        ],
+      },
+      {
+        id: 'd2-backup',
+        icon: '🗂️',
+        title: 'Backup & Storage Resilience',
+        category: 'd2backup',
+        services: [
+          {
+            shortName: 'AWS Backup',
+            fullName: 'AWS Backup',
+            ingat: '"Backup manager untuk semua AWS services"',
+            gunaUntuk: 'Centralized backup across EC2, RDS, EFS, DynamoDB, S3',
+            fungsi: 'Mengurus backup terpusat untuk pelbagai AWS services dengan backup policies, retention rules dan cross-region backup',
+            scenario: 'Company kena comply dengan policy backup 90-hari untuk semua databases — AWS Backup create backup plan, auto backup RDS + DynamoDB + EFS setiap hari, retain 90 hari, auto copy ke DR region.',
+            keywords: ['centralized backup', 'backup plans', 'retention', 'cross-region', 'compliance', 'automated'],
+          },
+          {
+            shortName: 'S3 Versioning & CRR',
+            fullName: 'S3 Versioning + Cross-Region Replication',
+            ingat: '"Simpan semua versi, auto copy ke region lain"',
+            gunaUntuk: 'Protect against accidental deletion, cross-region DR for S3',
+            fungsi: 'Versioning simpan semua versi object untuk recovery. CRR auto-replicate objects ke S3 bucket dalam region lain untuk disaster recovery',
+            scenario: 'Developer accidentally delete important file dalam S3 — Versioning enable restore previous version. CRR auto-copy semua objects ke DR bucket kat region lain untuk disaster recovery.',
+            keywords: ['versioning', 'CRR', 'accidental deletion', 'cross-region replication', 'SRR', 'point-in-time recovery'],
+          },
+          {
+            shortName: 'EBS Snapshots',
+            fullName: 'Amazon EBS Snapshots',
+            ingat: '"Gambar volume pada satu masa — restore anytime"',
+            gunaUntuk: 'Point-in-time backup of EBS volumes, cross-region DR',
+            fungsi: 'Mencipta backup incremental EBS volume ke S3 untuk recovery atau create volumes baru dalam AZ atau region lain',
+            scenario: 'EC2 kena ransomware, OS corrupted — restore EBS dari snapshot semalam. Atau copy snapshot ke region lain untuk DR, create new EC2 dari snapshot tu.',
+            keywords: ['incremental backup', 'point-in-time', 'cross-AZ', 'cross-region copy', 'EC2 recovery'],
+          },
+        ],
+      },
+    ],
+  },
   {
     id: 'domain3',
     badge: 'DOMAIN 3 · 24% OF EXAM',
@@ -422,6 +735,27 @@ export interface NavDomain {
 }
 
 export const navDomains: NavDomain[] = [
+  {
+    href: '#domain1',
+    label: 'D1 · Secure',
+    colorClass: 'text-c3',
+    items: [
+      { href: '#d1-iam',     label: '🔑 IAM',      className: 'text-c3 border-c3/20' },
+      { href: '#d1-netsec',  label: '🛡️ Net Sec', className: 'text-c4 border-c4/20' },
+      { href: '#d1-data',    label: '🔐 Data',     className: 'text-c6 border-c6/20' },
+      { href: '#d1-connect', label: '🔗 Connect',  className: 'text-c1 border-c1/20' },
+    ],
+  },
+  {
+    href: '#domain2',
+    label: 'D2 · Resilient',
+    colorClass: 'text-c2',
+    items: [
+      { href: '#d2-ha',     label: '⚡ HA',      className: 'text-c2 border-c2/20' },
+      { href: '#d2-dr',     label: '🔄 DR',      className: 'text-c5 border-c5/20' },
+      { href: '#d2-backup', label: '🗂️ Backup', className: 'text-c4 border-c4/20' },
+    ],
+  },
   {
     href: '#domain3',
     label: 'D3 · High-Performing',
