@@ -47,22 +47,19 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
       
-      - name: Set up Node.js
+      - name: Set up Bun
         if: steps.check_package.outputs.exists == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: "npm"
-      
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
         if: steps.check_package.outputs.exists == 'true'
-        run: npm ci
-      
+        run: bun install --frozen-lockfile
+
       - name: Build and run tests
         if: steps.check_package.outputs.exists == 'true'
         run: |
-          npm run build --if-present
-          npm test
+          bun run build --if-present
+          bun run test --if-present
       
       - name: Skip message
         if: steps.check_package.outputs.exists == 'false'
