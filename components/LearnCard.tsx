@@ -41,7 +41,7 @@ export default function LearnCard({ service, category }: LearnCardProps) {
 
           {service.storageDetails && (
             <div className="bg-white/3 rounded-lg px-3 py-2.5">
-              <p className="font-space-mono text-[0.58rem] uppercase tracking-[0.12em] text-aws-muted mb-2">Storage Classes</p>
+              <p className="font-space-mono text-[0.58rem] uppercase tracking-[0.12em] text-aws-muted mb-2">{service.detailsLabel ?? 'Storage Classes'}</p>
               <div className="space-y-1">
                 {service.storageDetails.split('\n').map((line) => {
                   const [tier, ...rest] = line.split('→')

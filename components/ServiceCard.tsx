@@ -36,7 +36,7 @@ export default function ServiceCard({ service, category }: ServiceCardProps) {
         {service.storageDetails && (
           <div className="col-span-full bg-white/3 rounded-lg px-3 py-2">
             <p className="font-space-mono text-[0.58rem] uppercase tracking-[0.12em] text-aws-muted mb-2">
-              Storage Classes (makin jarang access = makin murah)
+              {service.detailsLabel ?? 'Storage Classes (makin jarang access = makin murah)'}
             </p>
             <div className="text-[0.8rem] text-aws-text leading-relaxed space-y-0.5">
               {service.storageDetails.split('\n').map((line) => (
