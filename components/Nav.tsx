@@ -6,7 +6,7 @@ import { navDomains } from '@/data/awsServices'
 import SearchModal from './SearchModal'
 
 interface NavProps {
-  activePage?: 'cheatsheet' | 'learn'
+  activePage?: 'cheatsheet' | 'learn' | 'practice' | 'visual'
 }
 
 export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
@@ -35,6 +35,8 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
 
         <PageLink href="/" label="Cheat Sheet" active={activePage === 'cheatsheet'} />
         <PageLink href="/learn" label="Deep Notes" active={activePage === 'learn'} />
+        <PageLink href="/practice" label="Practice" active={activePage === 'practice'} />
+        <PageLink href="/visual" label="Visual" active={activePage === 'visual'} />
 
         <span className="text-aws-border text-sm shrink-0">·</span>
 
@@ -73,6 +75,8 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
         <div className="flex items-center gap-2">
           <PageLink href="/" label="Cheat Sheet" active={activePage === 'cheatsheet'} />
           <PageLink href="/learn" label="Deep Notes" active={activePage === 'learn'} />
+          <PageLink href="/practice" label="Practice" active={activePage === 'practice'} />
+          <PageLink href="/visual" label="Visual" active={activePage === 'visual'} />
 
           {/* search icon */}
           <button onClick={() => setSearchOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-1.5" aria-label="Search">
@@ -106,6 +110,27 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
                 </svg>
               </button>
             </div>
+            {/* page links */}
+            <div className="px-4 pt-4 pb-2 flex flex-wrap gap-2 border-b border-aws-border/60">
+              {[
+                { href: '/', label: 'Cheat Sheet', active: activePage === 'cheatsheet' },
+                { href: '/learn', label: 'Deep Notes', active: activePage === 'learn' },
+                { href: '/practice', label: 'Practice', active: activePage === 'practice' },
+                { href: '/visual', label: 'Visual', active: activePage === 'visual' },
+              ].map((p) => (
+                <Link
+                  key={p.href}
+                  href={p.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`font-space-mono text-[0.62rem] uppercase tracking-widest px-3 py-1.5 rounded-lg border transition-all ${
+                    p.active ? 'text-aws-text border-aws-border bg-white/8' : 'text-aws-muted border-aws-border/40 hover:text-aws-text'
+                  }`}
+                >
+                  {p.label}
+                </Link>
+              ))}
+            </div>
+
             <div className="p-4 space-y-5">
               {navDomains.map((domain) => (
                 <div key={domain.href}>
