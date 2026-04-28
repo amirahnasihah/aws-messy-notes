@@ -25,6 +25,7 @@ export interface ServiceCard {
   contohGuna?: string
   scenario?: string
   storageDetails?: string
+  detailsLabel?: string
   keywords: string[]
 }
 
@@ -512,6 +513,17 @@ export const domains: DomainData[] = [
             fungsi: 'Mengurus DNS dan mengarahkan traffic kepada endpoint yang betul',
             contohGuna: 'Point domain ke server, failover ke backup region',
             keywords: ['DNS', 'domain', 'routing policy', 'failover'],
+          },
+          {
+            shortName: 'Route 53 Routing Policies',
+            fullName: 'Amazon Route 53 — Routing Policies',
+            ingat: '"Cara Route 53 decide siapa dapat traffic"',
+            gunaUntuk: 'Control how DNS traffic is routed to resources',
+            fungsi: 'Pelbagai routing policies untuk optimize availability, performance, failover, dan geolocation berdasarkan health checks dan rules',
+            detailsLabel: 'Routing Policies',
+            storageDetails: 'Simple → 1 resource, no health check, no failover\nWeighted → split traffic by % (A=70%, B=30%)\nLatency-based → route to lowest latency AWS region\nFailover → primary (active) + secondary (passive) via health check\nGeolocation → route by user\'s country/continent\nGeoproximity → route by geographic distance + bias\nMulti-Value → up to 8 healthy records, random selection',
+            scenario: 'ALB (primary) unhealthy → Route 53 Failover policy auto-redirect ke S3 static error page (secondary). Health check detect ALB down, traffic pindah ke secondary automatik. BUKAN CloudFront — CF cache content tapi tak handle active-passive failover.',
+            keywords: ['failover', 'active-passive', 'health check', 'weighted', 'latency-based', 'geolocation', 'simple'],
           },
         ],
       },
