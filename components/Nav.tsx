@@ -6,7 +6,7 @@ import { navDomains } from '@/data/awsServices'
 import SearchModal from './SearchModal'
 
 interface NavProps {
-  activePage?: 'cheatsheet' | 'learn'
+  activePage?: 'cheatsheet' | 'learn' | 'practice' | 'visual'
 }
 
 export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
@@ -35,6 +35,8 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
 
         <PageLink href="/" label="Cheat Sheet" active={activePage === 'cheatsheet'} />
         <PageLink href="/learn" label="Deep Notes" active={activePage === 'learn'} />
+        <PageLink href="/practice" label="Practice" active={activePage === 'practice'} />
+        <PageLink href="/visual" label="Visual" active={activePage === 'visual'} />
 
         <span className="text-aws-border text-sm shrink-0">·</span>
 
@@ -70,12 +72,9 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
       {/* ── Mobile nav ── */}
       <nav className="md:hidden fixed top-0 left-0 right-0 h-14 z-50 flex items-center justify-between px-4 bg-aws-bg/95 backdrop-blur-md border-b border-aws-border">
         <span className="font-space-mono text-[0.7rem] font-bold text-c1">AWS SAA-C03</span>
-        <div className="flex items-center gap-2">
-          <PageLink href="/" label="Cheat Sheet" active={activePage === 'cheatsheet'} />
-          <PageLink href="/learn" label="Deep Notes" active={activePage === 'learn'} />
-
+        <div className="flex items-center gap-1">
           {/* search icon */}
-          <button onClick={() => setSearchOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-1.5" aria-label="Search">
+          <button onClick={() => setSearchOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-2" aria-label="Search">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <circle cx="7.5" cy="7.5" r="5.5" />
               <path d="M16 16l-3.5-3.5" />
@@ -83,7 +82,7 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
           </button>
 
           {/* hamburger */}
-          <button onClick={() => setMenuOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-1.5" aria-label="Open menu">
+          <button onClick={() => setMenuOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-2" aria-label="Open menu">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <rect y="3" width="20" height="2" rx="1" />
               <rect y="9" width="20" height="2" rx="1" />
@@ -106,6 +105,31 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
                 </svg>
               </button>
             </div>
+            {/* page links */}
+            <div className="px-4 py-3 border-b border-aws-border/60 space-y-1">
+              {[
+                { href: '/',          label: 'Cheat Sheet', icon: '📋', active: activePage === 'cheatsheet' },
+                { href: '/learn',     label: 'Deep Notes',  icon: '📖', active: activePage === 'learn' },
+                { href: '/practice',  label: 'Practice',    icon: '✏️', active: activePage === 'practice' },
+                { href: '/visual',    label: 'Visual',      icon: '🗺️', active: activePage === 'visual' },
+              ].map((p) => (
+                <Link
+                  key={p.href}
+                  href={p.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg transition-all ${
+                    p.active
+                      ? 'bg-white/8 text-aws-text'
+                      : 'text-aws-muted hover:bg-white/4 hover:text-aws-text'
+                  }`}
+                >
+                  <span className="text-base leading-none">{p.icon}</span>
+                  <span className="font-space-mono text-[0.68rem] uppercase tracking-widest">{p.label}</span>
+                  {p.active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-c1" />}
+                </Link>
+              ))}
+            </div>
+
             <div className="p-4 space-y-5">
               {navDomains.map((domain) => (
                 <div key={domain.href}>
