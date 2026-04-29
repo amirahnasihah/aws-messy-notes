@@ -219,4 +219,80 @@ export const practiceQuestions: PracticeQuestion[] = [
     },
     keywords: ['Lambda', 'serverless', 'event-driven', 'S3 trigger', 'cost-effective', 'pay per use'],
   },
+  {
+    id: 'q-sqs-visibility-timeout',
+    domain: 'd2',
+    domainLabel: 'Resilient Architectures',
+    difficulty: 'Medium',
+    scenario:
+      'Several Amazon EC2 Spot instances are being used to process messages from an Amazon SQS queue and store results in an Amazon DynamoDB table. Shortly after picking up a message from the queue, AWS terminated the Spot instance. The Spot instance had not finished processing the message. What will happen to the message?',
+    options: [
+      { id: 'a', text: 'The message will remain in the queue and be immediately picked up by another instance' },
+      { id: 'b', text: 'The message will become available for processing again after the visibility timeout expires' },
+      { id: 'c', text: 'The message will be lost as it would have been deleted from the queue when processed' },
+      { id: 'd', text: 'The results may be duplicated in DynamoDB as the message will likely be processed multiple times' },
+    ],
+    correctId: 'b',
+    explanation: {
+      correct:
+        'The visibility timeout is the amount of time a message is invisible in the queue after a reader picks it up. When the Spot instance picked up the message, a visibility timeout clock started. Since the instance was terminated before calling DeleteMessage, the message was never deleted. Once the visibility timeout expires, SQS makes the message visible again so another consumer can pick it up. Maximum visibility timeout is 12 hours.',
+      incorrects: {
+        a: 'Immediately picked up is incorrect. The message is NOT immediately available — it remains invisible during the entire visibility timeout window. Only after that window expires does it reappear in the queue. There is no instant failover for in-flight SQS messages.',
+        c: 'Message will be lost is incorrect. SQS messages are only deleted when the consumer explicitly calls the DeleteMessage API after successfully processing. Simply picking up (receiving) a message does NOT delete it — it only starts the visibility timeout clock.',
+        d: 'Results duplicated in DynamoDB is incorrect. Since the Spot instance was terminated before finishing processing, it likely did not write final results to DynamoDB. The message should be fully processed once by the next consumer. However, if the app did partial writes before termination, idempotency logic in your application should handle deduplication.',
+      },
+    },
+    keywords: ['SQS', 'visibility timeout', 'Spot instance', 'in-flight message', 'DeleteMessage', 'resilience'],
+  },
+  {
+    id: 'q-sqs-standard-vs-fifo',
+    domain: 'd3',
+    domainLabel: 'High-Performing Architectures',
+    difficulty: 'Easy',
+    scenario:
+      'A company is building an order management system. Each order must be processed exactly once and in the exact sequence it was received. Which Amazon SQS queue type should the Solutions Architect choose?',
+    options: [
+      { id: 'a', text: 'SQS Standard Queue' },
+      { id: 'b', text: 'SQS FIFO Queue' },
+      { id: 'c', text: 'SQS Standard Queue with a Dead Letter Queue (DLQ)' },
+      { id: 'd', text: 'Amazon SNS with SQS Standard Queue fan-out' },
+    ],
+    correctId: 'b',
+    explanation: {
+      correct:
+        'SQS FIFO (First-In-First-Out) queue guarantees exactly-once processing and strict message ordering. FIFO queues use message deduplication IDs to prevent duplicates, and message group IDs to enforce per-group ordering. This is exactly what order management requires — no order should be processed twice, and orders must follow the sequence received.',
+      incorrects: {
+        a: 'SQS Standard Queue is incorrect. Standard queues offer best-effort ordering (not guaranteed) and at-least-once delivery (messages may be delivered more than once). For order management where sequence and exactly-once matter, Standard Queue will cause issues.',
+        c: 'Standard Queue + DLQ is incorrect. A Dead Letter Queue captures messages that failed processing repeatedly — it does not solve the ordering or exactly-once problem. DLQ is for error handling, not for ensuring FIFO delivery.',
+        d: 'SNS + SQS fan-out is incorrect. This pattern distributes one message to multiple queues simultaneously — useful for parallel processing by multiple systems. It does not provide ordering guarantees and would process the same message in multiple places, not once in sequence.',
+      },
+    },
+    keywords: ['SQS FIFO', 'exactly-once', 'ordering', 'deduplication', 'Standard vs FIFO'],
+  },
+  {
+    id: 'q-sqs-dlq',
+    domain: 'd3',
+    domainLabel: 'High-Performing Architectures',
+    difficulty: 'Easy',
+    scenario:
+      'A company uses SQS to process image thumbnails. Occasionally, some messages fail to process and keep reappearing in the queue, blocking other messages and causing repeated Lambda invocations. How should the Solutions Architect prevent these "poison pill" messages from disrupting the queue?',
+    options: [
+      { id: 'a', text: 'Increase the visibility timeout so failed messages stay hidden longer' },
+      { id: 'b', text: 'Enable a Dead Letter Queue (DLQ) with a maxReceiveCount' },
+      { id: 'c', text: 'Switch to SQS FIFO to prevent duplicate delivery' },
+      { id: 'd', text: 'Delete the SQS queue and recreate it' },
+    ],
+    correctId: 'b',
+    explanation:
+    {
+      correct:
+        'A Dead Letter Queue (DLQ) with maxReceiveCount is correct. When a message fails to process and becomes visible again repeatedly, after maxReceiveCount attempts SQS automatically moves it to the DLQ. This isolates problematic "poison pill" messages from the main queue, stops the retry loop, and lets you inspect and debug the failed messages separately without disrupting normal queue processing.',
+      incorrects: {
+        a: 'Increasing visibility timeout is incorrect. Longer visibility timeout just delays the problem — the failed message will still reappear after the timeout and keep retrying infinitely. It does not remove the poison pill from circulation.',
+        c: 'Switching to FIFO is incorrect. FIFO ensures ordering and exactly-once delivery but does NOT solve poison pill messages. A bad message in a FIFO queue would still block the message group indefinitely.',
+        d: 'Deleting and recreating queue is incorrect. This would delete ALL messages in the queue, including valid unprocessed ones. It is destructive and not a proper solution for handling individual failed messages.',
+      },
+    },
+    keywords: ['DLQ', 'Dead Letter Queue', 'maxReceiveCount', 'poison pill', 'SQS retry'],
+  },
 ]
