@@ -123,21 +123,27 @@ export default function PracticePage() {
 }
 
 function ReviewMode() {
-  return (
-    <div className="space-y-10">
-      {practiceQuestions.map((q, i) => (
-        <ReviewCard key={q.id} q={q} index={i} />
-      ))}
-    </div>
-  )
-}
+  const [index, setIndex] = useState(0)
+  const total = practiceQuestions.length
+  const q = practiceQuestions[index]
 
-function ReviewCard({ q, index }: { q: PracticeQuestion; index: number }) {
   return (
     <div>
+      {/* progress bar */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="flex-1 h-1.5 bg-white/6 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-c1 to-c5 rounded-full transition-all duration-500"
+            style={{ width: `${((index + 1) / total) * 100}%` }}
+          />
+        </div>
+        <span className="font-space-mono text-[0.65rem] text-aws-muted whitespace-nowrap">
+          {index + 1} / {total}
+        </span>
+      </div>
+
       {/* question card */}
       <div className="bg-aws-card border border-aws-border rounded-xl overflow-hidden mb-3">
-        {/* meta row */}
         <div className="flex items-center gap-2 px-5 py-3 border-b border-aws-border/60 bg-white/2">
           <span className="font-space-mono text-[0.58rem] text-aws-muted">Q{index + 1}</span>
           <span className="text-aws-border">·</span>
@@ -150,26 +156,28 @@ function ReviewCard({ q, index }: { q: PracticeQuestion; index: number }) {
           </span>
         </div>
 
-        {/* scenario */}
         <div className="px-5 py-5">
           <p className="text-[0.92rem] text-aws-text leading-relaxed">{q.scenario}</p>
         </div>
 
-        {/* options — correct highlighted, others dimmed */}
         <div className="px-5 pb-5 space-y-2.5">
           {q.options.map((opt) => {
-            const isCorrect = opt.id === q.correctId
-            const cls = isCorrect
-              ? 'bg-emerald-500/12 border-emerald-500/50 text-emerald-300 font-semibold'
-              : 'bg-white/2 border-aws-border/40 text-aws-muted'
+            const correct = opt.id === q.correctId
             return (
-              <div key={opt.id} className={`w-full px-4 py-3 rounded-xl border text-[0.88rem] leading-snug ${cls}`}>
+              <div
+                key={opt.id}
+                className={`w-full px-4 py-3 rounded-xl border text-[0.88rem] leading-snug ${
+                  correct
+                    ? 'bg-emerald-500/12 border-emerald-500/50 text-emerald-300 font-semibold'
+                    : 'bg-white/2 border-aws-border/40 text-aws-muted'
+                }`}
+              >
                 <span className="flex items-start gap-3">
                   <span className="font-space-mono text-[0.65rem] font-bold mt-0.5 shrink-0 opacity-60">
                     {opt.id.toUpperCase()}
                   </span>
                   <span>{opt.text}</span>
-                  {isCorrect && <span className="ml-auto shrink-0 text-emerald-400">✓</span>}
+                  {correct && <span className="ml-auto shrink-0 text-emerald-400">✓</span>}
                 </span>
               </div>
             )
@@ -177,8 +185,25 @@ function ReviewCard({ q, index }: { q: PracticeQuestion; index: number }) {
         </div>
       </div>
 
-      {/* explanation — always visible in review mode */}
       <ExplanationBlock q={q} selected={q.correctId} isCorrect={true} reviewMode={true} />
+
+      {/* prev / next */}
+      <div className="flex gap-3 mt-4">
+        <button
+          onClick={() => setIndex((i) => i - 1)}
+          disabled={index === 0}
+          className="flex-1 py-3 rounded-xl font-space-mono text-sm font-bold border transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed bg-white/4 border-aws-border text-aws-muted hover:text-aws-text hover:bg-white/8"
+        >
+          ← Prev
+        </button>
+        <button
+          onClick={() => setIndex((i) => i + 1)}
+          disabled={index + 1 >= total}
+          className="flex-1 py-3 rounded-xl font-space-mono text-sm font-bold border transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed bg-c1/15 border-c1/40 text-c1 hover:bg-c1/25"
+        >
+          Next →
+        </button>
+      </div>
     </div>
   )
 }
