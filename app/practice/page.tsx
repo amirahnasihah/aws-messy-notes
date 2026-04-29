@@ -11,13 +11,6 @@ const domainColors: Record<string, string> = {
   d4: 'text-c6',
 }
 
-const domainBg: Record<string, string> = {
-  d1: 'bg-c3/10 border-c3/30',
-  d2: 'bg-c2/10 border-c2/30',
-  d3: 'bg-c1/10 border-c1/30',
-  d4: 'bg-c6/10 border-c6/30',
-}
-
 const difficultyColors: Record<string, string> = {
   Easy: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30',
   Medium: 'text-amber-400 bg-amber-400/10 border-amber-400/30',
@@ -25,8 +18,10 @@ const difficultyColors: Record<string, string> = {
 }
 
 type QuizState = 'question' | 'revealed'
+type PageMode = 'quiz' | 'review'
 
 export default function PracticePage() {
+  const [mode, setMode] = useState<PageMode>('quiz')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const [quizState, setQuizState] = useState<QuizState>('question')
@@ -64,17 +59,50 @@ export default function PracticePage() {
     setFinished(false)
   }, [])
 
+  const handleModeSwitch = useCallback((next: PageMode) => {
+    setMode(next)
+    handleRestart()
+  }, [handleRestart])
+
   return (
     <>
       <Nav activePage="practice" />
       <main className="max-w-[720px] mx-auto px-4 pt-[calc(3.5rem+1.5rem)] pb-16">
         {/* header */}
-        <div className="mb-8">
-          <h1 className="font-space-mono text-2xl font-bold text-aws-text mb-1">Practice Questions</h1>
-          <p className="text-aws-muted text-sm">AWS SAA-C03 · MCQ · Scenario-based · With full explanations</p>
+        <div className="mb-8 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="font-space-mono text-2xl font-bold text-aws-text mb-1">Practice Questions</h1>
+            <p className="text-aws-muted text-sm">AWS SAA-C03 · MCQ · Scenario-based · With full explanations</p>
+          </div>
+
+          {/* mode toggle */}
+          <div className="flex shrink-0 items-center gap-1 bg-white/4 border border-aws-border rounded-lg p-1">
+            <button
+              onClick={() => handleModeSwitch('quiz')}
+              className={`font-space-mono text-[0.65rem] font-bold px-3 py-1.5 rounded-md transition-all duration-150 ${
+                mode === 'quiz'
+                  ? 'bg-c1/20 border border-c1/40 text-c1'
+                  : 'text-aws-muted hover:text-aws-text'
+              }`}
+            >
+              Quiz
+            </button>
+            <button
+              onClick={() => handleModeSwitch('review')}
+              className={`font-space-mono text-[0.65rem] font-bold px-3 py-1.5 rounded-md transition-all duration-150 ${
+                mode === 'review'
+                  ? 'bg-c1/20 border border-c1/40 text-c1'
+                  : 'text-aws-muted hover:text-aws-text'
+              }`}
+            >
+              Review
+            </button>
+          </div>
         </div>
 
-        {finished ? (
+        {mode === 'review' ? (
+          <ReviewMode />
+        ) : finished ? (
           <FinishedScreen score={score} onRestart={handleRestart} />
         ) : (
           <QuestionCard
@@ -91,6 +119,67 @@ export default function PracticePage() {
         )}
       </main>
     </>
+  )
+}
+
+function ReviewMode() {
+  return (
+    <div className="space-y-10">
+      {practiceQuestions.map((q, i) => (
+        <ReviewCard key={q.id} q={q} index={i} />
+      ))}
+    </div>
+  )
+}
+
+function ReviewCard({ q, index }: { q: PracticeQuestion; index: number }) {
+  return (
+    <div>
+      {/* question card */}
+      <div className="bg-aws-card border border-aws-border rounded-xl overflow-hidden mb-3">
+        {/* meta row */}
+        <div className="flex items-center gap-2 px-5 py-3 border-b border-aws-border/60 bg-white/2">
+          <span className="font-space-mono text-[0.58rem] text-aws-muted">Q{index + 1}</span>
+          <span className="text-aws-border">·</span>
+          <span className={`font-space-mono text-[0.6rem] font-bold uppercase tracking-widest ${domainColors[q.domain]}`}>
+            {q.domainLabel}
+          </span>
+          <span className="text-aws-border">·</span>
+          <span className={`font-space-mono text-[0.6rem] px-2 py-0.5 rounded-full border ${difficultyColors[q.difficulty]}`}>
+            {q.difficulty}
+          </span>
+        </div>
+
+        {/* scenario */}
+        <div className="px-5 py-5">
+          <p className="text-[0.92rem] text-aws-text leading-relaxed">{q.scenario}</p>
+        </div>
+
+        {/* options — correct highlighted, others dimmed */}
+        <div className="px-5 pb-5 space-y-2.5">
+          {q.options.map((opt) => {
+            const isCorrect = opt.id === q.correctId
+            const cls = isCorrect
+              ? 'bg-emerald-500/12 border-emerald-500/50 text-emerald-300 font-semibold'
+              : 'bg-white/2 border-aws-border/40 text-aws-muted'
+            return (
+              <div key={opt.id} className={`w-full px-4 py-3 rounded-xl border text-[0.88rem] leading-snug ${cls}`}>
+                <span className="flex items-start gap-3">
+                  <span className="font-space-mono text-[0.65rem] font-bold mt-0.5 shrink-0 opacity-60">
+                    {opt.id.toUpperCase()}
+                  </span>
+                  <span>{opt.text}</span>
+                  {isCorrect && <span className="ml-auto shrink-0 text-emerald-400">✓</span>}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* explanation — always visible in review mode */}
+      <ExplanationBlock q={q} selected={q.correctId} isCorrect={true} reviewMode={true} />
+    </div>
   )
 }
 
@@ -233,28 +322,32 @@ function ExplanationBlock({
   q,
   selected,
   isCorrect,
+  reviewMode = false,
 }: {
   q: PracticeQuestion
   selected: string
   isCorrect: boolean
+  reviewMode?: boolean
 }) {
   return (
     <div className="bg-aws-card border border-aws-border rounded-xl overflow-hidden">
-      {/* verdict */}
-      <div
-        className={`flex items-center gap-2 px-5 py-3 border-b ${
-          isCorrect
-            ? 'bg-emerald-500/8 border-emerald-500/30'
-            : 'bg-red-500/8 border-red-500/30'
-        }`}
-      >
-        <span className={`text-lg ${isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
-          {isCorrect ? '✓' : '✗'}
-        </span>
-        <span className={`font-space-mono text-sm font-bold ${isCorrect ? 'text-emerald-300' : 'text-red-300'}`}>
-          {isCorrect ? 'Correct!' : 'Incorrect'}
-        </span>
-      </div>
+      {/* verdict — hidden in review mode (answer is always correct) */}
+      {!reviewMode && (
+        <div
+          className={`flex items-center gap-2 px-5 py-3 border-b ${
+            isCorrect
+              ? 'bg-emerald-500/8 border-emerald-500/30'
+              : 'bg-red-500/8 border-red-500/30'
+          }`}
+        >
+          <span className={`text-lg ${isCorrect ? 'text-emerald-400' : 'text-red-400'}`}>
+            {isCorrect ? '✓' : '✗'}
+          </span>
+          <span className={`font-space-mono text-sm font-bold ${isCorrect ? 'text-emerald-300' : 'text-red-300'}`}>
+            {isCorrect ? 'Correct!' : 'Incorrect'}
+          </span>
+        </div>
+      )}
 
       <div className="px-5 py-4 space-y-4">
         {/* correct explanation */}
@@ -276,14 +369,14 @@ function ExplanationBlock({
               <div
                 key={opt.id}
                 className={`rounded-lg px-4 py-3 border ${
-                  opt.id === selected && !isCorrect
+                  !reviewMode && opt.id === selected && !isCorrect
                     ? 'bg-red-500/8 border-red-500/25'
                     : 'bg-white/2 border-aws-border/40'
                 }`}
               >
                 <p
                   className={`font-space-mono text-[0.58rem] uppercase tracking-widest mb-1.5 ${
-                    opt.id === selected && !isCorrect ? 'text-red-400/70' : 'text-aws-muted'
+                    !reviewMode && opt.id === selected && !isCorrect ? 'text-red-400/70' : 'text-aws-muted'
                   }`}
                 >
                   ✗ {opt.text}
