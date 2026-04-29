@@ -130,16 +130,13 @@ function ReviewMode() {
   return (
     <div>
       {/* progress bar */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="flex-1 h-1.5 bg-white/6 rounded-full overflow-hidden">
+      <div className="mb-5">
+        <div className="h-1.5 bg-white/6 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-c1 to-c5 rounded-full transition-all duration-500"
             style={{ width: `${((index + 1) / total) * 100}%` }}
           />
         </div>
-        <span className="font-space-mono text-[0.65rem] text-aws-muted whitespace-nowrap">
-          {index + 1} / {total}
-        </span>
       </div>
 
       {/* question card */}
@@ -185,24 +182,31 @@ function ReviewMode() {
         </div>
       </div>
 
+      {/* bottom padding so content doesn't hide behind floating bar */}
       <ExplanationBlock q={q} selected={q.correctId} isCorrect={true} reviewMode={true} />
+      <div className="h-24" />
 
-      {/* prev / next */}
-      <div className="flex gap-3 mt-4">
-        <button
-          onClick={() => setIndex((i) => i - 1)}
-          disabled={index === 0}
-          className="flex-1 py-3 rounded-xl font-space-mono text-sm font-bold border transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed bg-white/4 border-aws-border text-aws-muted hover:text-aws-text hover:bg-white/8"
-        >
-          ← Prev
-        </button>
-        <button
-          onClick={() => setIndex((i) => i + 1)}
-          disabled={index + 1 >= total}
-          className="flex-1 py-3 rounded-xl font-space-mono text-sm font-bold border transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed bg-c1/15 border-c1/40 text-c1 hover:bg-c1/25"
-        >
-          Next →
-        </button>
+      {/* floating prev / next bar */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[720px] px-4 z-50">
+        <div className="flex gap-3 bg-aws-card/80 backdrop-blur-md border border-aws-border rounded-2xl p-2 shadow-xl">
+          <button
+            onClick={() => setIndex((i) => i - 1)}
+            disabled={index === 0}
+            className="flex-1 py-2.5 rounded-xl font-space-mono text-sm font-bold border transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed bg-white/4 border-aws-border text-aws-muted hover:text-aws-text hover:bg-white/8"
+          >
+            ← Prev
+          </button>
+          <span className="font-space-mono text-[0.65rem] text-aws-muted self-center px-2 whitespace-nowrap">
+            {index + 1} / {total}
+          </span>
+          <button
+            onClick={() => setIndex((i) => i + 1)}
+            disabled={index + 1 >= total}
+            className="flex-1 py-2.5 rounded-xl font-space-mono text-sm font-bold border transition-all duration-150 disabled:opacity-25 disabled:cursor-not-allowed bg-c1/15 border-c1/40 text-c1 hover:bg-c1/25"
+          >
+            Next →
+          </button>
+        </div>
       </div>
     </div>
   )
