@@ -345,4 +345,129 @@ export const practiceQuestions: PracticeQuestion[] = [
     },
     keywords: ['CodeCommit', 'IAM', 'private Git', 'source control', 'AWS-native'],
   },
+  {
+    id: 'q-vpc-nat-gateway',
+    domain: 'd1',
+    domainLabel: 'Secure Architectures',
+    difficulty: 'Easy',
+    scenario:
+      'A company runs application servers in private subnets within a VPC. The servers need to download security patches from the internet regularly. The servers must NOT be directly accessible from the internet. Which solution should a Solutions Architect implement?',
+    options: [
+      { id: 'a', text: 'Attach an Internet Gateway directly to the private subnet' },
+      { id: 'b', text: 'Deploy a NAT Gateway in the private subnet and update route tables' },
+      { id: 'c', text: 'Deploy a NAT Gateway in a public subnet and update the private subnet route tables' },
+      { id: 'd', text: 'Assign Elastic IP addresses to all private subnet instances' },
+    ],
+    correctId: 'c',
+    explanation: {
+      correct:
+        'NAT Gateway in a PUBLIC subnet is correct. NAT Gateway allows outbound-only internet access for private subnet instances. The key detail: NAT Gateway must be placed in a PUBLIC subnet (which has IGW access), and the private subnet route table must have 0.0.0.0/0 → NAT Gateway. Internet cannot initiate connections to private instances.',
+      incorrects: {
+        a: 'Internet Gateway on a private subnet is incorrect. Adding an IGW route makes the subnet PUBLIC — internet can then initiate connections in. This violates the requirement that servers must not be accessible from the internet.',
+        b: 'NAT Gateway in the private subnet is incorrect. This is a common trap! The NAT Gateway itself MUST be in a PUBLIC subnet to access the internet via IGW. Placing NAT in a private subnet means it has no internet path and will not work.',
+        d: 'Elastic IP on private instances is incorrect. Assigning a public/Elastic IP to instances makes them directly reachable from the internet (once an IGW route exists), violating the isolation requirement.',
+      },
+    },
+    keywords: ['NAT Gateway', 'private subnet', 'outbound internet', 'public subnet placement', 'no inbound'],
+  },
+  {
+    id: 'q-nacl-deny',
+    domain: 'd1',
+    domainLabel: 'Secure Architectures',
+    difficulty: 'Medium',
+    scenario:
+      'A security team has detected that a specific external IP range (203.0.113.0/24) is sending malicious traffic to instances in a VPC subnet. The team needs to block all traffic from this IP range immediately. Which solution should be used?',
+    options: [
+      { id: 'a', text: 'Add a Deny inbound rule to the Security Group for the affected instances' },
+      { id: 'b', text: 'Add a Deny inbound rule to the Network ACL for the affected subnet' },
+      { id: 'c', text: 'Remove the Internet Gateway from the VPC' },
+      { id: 'd', text: 'Add a Deny route in the VPC route table for the IP range' },
+    ],
+    correctId: 'b',
+    explanation: {
+      correct:
+        'Network ACL Deny rule is correct. NACLs support explicit DENY rules and operate at the subnet level, making them the right tool to block a specific IP range. Add a DENY inbound rule with a lower rule number than any ALLOW rules — NACL rules are processed in ascending order, first match wins.',
+      incorrects: {
+        a: 'Security Group Deny rule is incorrect. Security Groups support ALLOW rules only — there is no Deny option in SG. You can only remove allow rules, but you cannot explicitly block a specific IP range using SGs.',
+        c: 'Removing the Internet Gateway is incorrect. This is too destructive — it would block ALL internet access for ALL resources in the VPC, including legitimate traffic. The requirement is to block a specific IP range only.',
+        d: 'Route table Deny is incorrect. Route tables control where traffic is routed TO, not filtering based on source IP. Route tables do not support deny rules for specific source IPs.',
+      },
+    },
+    keywords: ['NACL', 'deny rule', 'block IP', 'subnet-level', 'security group vs NACL'],
+  },
+  {
+    id: 'q-vpc-peering-transitive',
+    domain: 'd1',
+    domainLabel: 'Secure Architectures',
+    difficulty: 'Hard',
+    scenario:
+      'A company has three VPCs: VPC-A (10.0.0.0/16), VPC-B (172.16.0.0/16), and VPC-C (192.168.0.0/16). VPC-A is peered with VPC-B, and VPC-B is peered with VPC-C. An EC2 instance in VPC-A attempts to communicate with an EC2 instance in VPC-C. What will happen?',
+    options: [
+      { id: 'a', text: 'The traffic will route through VPC-B automatically' },
+      { id: 'b', text: 'The communication will fail — VPC peering is not transitive' },
+      { id: 'c', text: 'The traffic will route but with higher latency due to the extra hop' },
+      { id: 'd', text: 'AWS will automatically create a peering connection between VPC-A and VPC-C' },
+    ],
+    correctId: 'b',
+    explanation: {
+      correct:
+        'Communication will fail — VPC Peering is non-transitive. Having A↔B and B↔C does NOT mean A can reach C. Each VPC peering connection is a direct 1-to-1 relationship. To allow VPC-A to communicate with VPC-C, you must create a separate, direct VPC peering connection between VPC-A and VPC-C. Alternatively, use AWS Transit Gateway which does support transitive routing.',
+      incorrects: {
+        a: 'Traffic routing through VPC-B is incorrect. VPC Peering does not support transitive routing. Traffic from VPC-A cannot pass through VPC-B to reach VPC-C, even though VPC-B is peered with both.',
+        c: 'Higher latency routing is incorrect. There is no routing path at all — the communication simply fails. VPC Peering is non-transitive by design.',
+        d: 'Auto-creating peering is incorrect. AWS does not automatically create peering connections. Each peering connection must be manually configured, requires acceptance from the target VPC owner, and routing must be explicitly configured in route tables.',
+      },
+    },
+    keywords: ['VPC peering', 'non-transitive', 'Transit Gateway', 'cross-VPC', 'routing'],
+  },
+  {
+    id: 'q-cidr-calculation',
+    domain: 'd1',
+    domainLabel: 'Secure Architectures',
+    difficulty: 'Easy',
+    scenario:
+      'A Solutions Architect is designing a VPC subnet with CIDR block 10.0.1.0/27. How many IP addresses are available for EC2 instances to use in this subnet?',
+    options: [
+      { id: 'a', text: '32' },
+      { id: 'b', text: '30' },
+      { id: 'c', text: '27' },
+      { id: 'd', text: '25' },
+    ],
+    correctId: 'c',
+    explanation: {
+      correct:
+        'Answer is 27 usable IPs. Formula: 2^(32−27) = 2^5 = 32 total IPs. AWS reserves 5 IPs in every subnet: .0 (network address), .1 (VPC router), .2 (DNS server), .3 (future use), .255 (broadcast). So 32 − 5 = 27 usable IPs for EC2 instances.',
+      incorrects: {
+        a: '32 is incorrect. 32 is the TOTAL number of IP addresses in a /27, but AWS always reserves 5 of them. The usable count is 32 − 5 = 27.',
+        b: '30 is incorrect. 30 would be the usable count for a /27 in standard networking (where only 2 are reserved for network and broadcast). However, AWS reserves 5 IPs per subnet, not 2.',
+        d: '25 is incorrect. This does not correspond to the correct formula. Always use: 2^(32−prefix) − 5 = usable IPs.',
+      },
+    },
+    keywords: ['CIDR', 'subnet calculation', '/27', '5 reserved IPs', 'usable hosts'],
+  },
+  {
+    id: 'q-vpc-endpoint-s3',
+    domain: 'd1',
+    domainLabel: 'Secure Architectures',
+    difficulty: 'Medium',
+    scenario:
+      'A company has EC2 instances in private subnets that frequently upload and download large files from Amazon S3. The current architecture uses a NAT Gateway, resulting in high data transfer costs. A Solutions Architect needs to reduce these costs while keeping the instances private. What is the most cost-effective solution?',
+    options: [
+      { id: 'a', text: 'Enable S3 Transfer Acceleration on the S3 bucket' },
+      { id: 'b', text: 'Create an S3 Gateway VPC Endpoint and update the route table' },
+      { id: 'c', text: 'Create an S3 Interface VPC Endpoint (PrivateLink)' },
+      { id: 'd', text: 'Move the EC2 instances to a public subnet to access S3 directly' },
+    ],
+    correctId: 'b',
+    explanation: {
+      correct:
+        'S3 Gateway VPC Endpoint is correct and most cost-effective. Gateway Endpoints for S3 and DynamoDB are FREE — there is no hourly charge and no data processing charge. Traffic routes through the AWS private network directly to S3 without going through the NAT Gateway. You simply create the endpoint and add it to the route table — EC2 instances automatically use it for S3 traffic.',
+      incorrects: {
+        a: 'S3 Transfer Acceleration is incorrect. Transfer Acceleration speeds up uploads to S3 from the internet using CloudFront edge locations. It costs extra money per GB and does not reduce NAT Gateway costs — it actually routes traffic over the internet, not through private AWS network.',
+        c: 'Interface VPC Endpoint is incorrect as the most cost-effective option. Interface Endpoints for S3 do exist (PrivateLink) but cost money per hour + per GB processed. The Gateway Endpoint is free and achieves the same goal for S3/DynamoDB.',
+        d: 'Moving to public subnet is incorrect. This exposes the EC2 instances to the internet, creating a security risk. The requirement is to keep instances private while reducing NAT costs.',
+      },
+    },
+    keywords: ['VPC endpoint', 'Gateway endpoint', 'S3', 'free', 'NAT cost reduction', 'private subnet'],
+  },
 ]
