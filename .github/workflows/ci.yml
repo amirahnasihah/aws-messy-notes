@@ -37,11 +37,16 @@ jobs:
 
             - name: Run tests
               if: steps.check_package.outputs.exists == 'true'
-              run: bun run test --if-present
+              run: |
+                  if bun run --print test &>/dev/null 2>&1; then
+                    bun run test
+                  else
+                    echo "No test script found, skipping."
+                  fi
 
             - name: Build
               if: steps.check_package.outputs.exists == 'true'
-              run: bun run build --if-present
+              run: bun run build
 
             - name: Skip message
               if: steps.check_package.outputs.exists == 'false'
