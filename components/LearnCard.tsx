@@ -1,4 +1,5 @@
 import { ServiceCard, ColorCategory, categoryStyles } from '@/data/awsServices'
+import GlossaryText from './GlossaryText'
 
 interface LearnCardProps {
   service: ServiceCard
@@ -9,9 +10,9 @@ export default function LearnCard({ service, category }: LearnCardProps) {
   const styles = categoryStyles[category]
 
   return (
-    <article className="relative overflow-hidden bg-aws-card border border-aws-border rounded-xl mb-4 transition-all duration-200 hover:border-white/12">
-      {/* left accent bar */}
-      <div className={`absolute top-0 left-0 w-[3px] h-full ${styles.accent}`} />
+    <article className="relative bg-aws-card border border-aws-border rounded-xl mb-4 transition-all duration-200 hover:border-white/12">
+      {/* left accent bar — rounded corners match card, no overflow-hidden needed */}
+      <div className={`absolute top-0 left-0 w-[3px] h-full rounded-l-xl ${styles.accent}`} />
 
       <div className="px-5 py-4">
         {/* heading row */}
@@ -29,13 +30,17 @@ export default function LearnCard({ service, category }: LearnCardProps) {
         <div className="space-y-3">
           <div>
             <p className="font-space-mono text-[0.58rem] uppercase tracking-[0.12em] text-aws-muted mb-1">Apa Dia</p>
-            <p className="text-[0.85rem] text-aws-text leading-relaxed">{service.fungsi}</p>
+            <p className="text-[0.85rem] text-aws-text leading-relaxed">
+              <GlossaryText text={service.fungsi} />
+            </p>
           </div>
 
           {service.contohGuna && (
             <div>
               <p className="font-space-mono text-[0.58rem] uppercase tracking-[0.12em] text-aws-muted mb-1">Contoh Guna</p>
-              <p className="text-[0.85rem] text-aws-text leading-relaxed">{service.contohGuna}</p>
+              <p className="text-[0.85rem] text-aws-text leading-relaxed">
+                <GlossaryText text={service.contohGuna} />
+              </p>
             </div>
           )}
 
@@ -61,7 +66,9 @@ export default function LearnCard({ service, category }: LearnCardProps) {
               <p className="font-space-mono text-[0.58rem] uppercase tracking-[0.12em] text-c6/70 mb-1.5">
                 💡 Exam Scenario
               </p>
-              <p className="text-[0.85rem] text-aws-text leading-relaxed">{service.scenario}</p>
+              <p className="text-[0.85rem] text-aws-text leading-relaxed">
+                <GlossaryText text={service.scenario} />
+              </p>
             </div>
           )}
 
@@ -74,7 +81,7 @@ export default function LearnCard({ service, category }: LearnCardProps) {
                 {service.tips.map((tip) => (
                   <li key={tip} className="text-[0.82rem] text-aws-text leading-relaxed flex gap-2">
                     <span className="text-amber-400/60 shrink-0">→</span>
-                    <span>{tip}</span>
+                    <GlossaryText text={tip} />
                   </li>
                 ))}
               </ul>
