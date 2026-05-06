@@ -46,8 +46,9 @@ export default function GlossaryTerm({ term, definition }: Props) {
       {show && (
         <span
           role="tooltip"
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-50 block
-            w-56 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5
+          className="absolute bottom-full mb-1.5 z-50 block
+            left-0 sm:left-1/2 sm:-translate-x-1/2
+            w-52 max-w-[min(208px,80vw)] rounded-xl border border-slate-700 bg-slate-900 px-3 py-2.5
             shadow-xl shadow-black/40 text-[0.75rem] text-slate-200 leading-relaxed"
           onMouseEnter={reveal}
           onMouseLeave={hide}
