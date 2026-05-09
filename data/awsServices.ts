@@ -244,6 +244,23 @@ export const domains: DomainData[] = [
             scenario: '"Audit S3 buckets untuk cari data sensitif yang ter-upload secara tak sengaja" → Amazon Macie. Keyword: PII, sensitive data, S3 data discovery.',
             keywords: ['PII detection', 'sensitive data', 'S3', 'ML-based', 'data privacy', 'GDPR'],
           },
+          {
+            shortName: 'Penetration Testing',
+            fullName: 'AWS Penetration Testing Policy',
+            ingat: '"AWS bagi pentest 8 services — tak perlu minta kebenaran dulu"',
+            gunaUntuk: 'Understand AWS policy on security testing and acceptable use',
+            fungsi: 'AWS membenarkan customers jalankan security assessments dan penetration tests terhadap AWS infrastructure mereka TANPA kelulusan awal untuk 8 services: EC2, RDS, CloudFront, Aurora, API Gateway, Lambda, Lightsail, Elastic Beanstalk. Aktiviti yang DILARANG: DoS/DDoS simulation, DNS zone walking, port/protocol/request flooding.',
+            scenario: '"What is AWS position on penetration testing?" → AWS allow pentest on SOME resources WITHOUT prior authorization. Bukan semua resources, bukan tiada langsung — 8 services spesifik sahaja.',
+            tips: [
+              'AWS MEMBENARKAN pentest pada 8 services tanpa perlu minta approval — ini exam trick, ramai sangka kena minta dulu',
+              'Yang DILARANG: DoS/DDoS simulation, DNS zone walking, port flooding — semua ini violate AUP',
+              'SALAH: "AWS tak benarkan pentest langsung" — salah, AWS memang bagi untuk services tertentu',
+              'SALAH: "Boleh pentest SEMUA resources" — salah, ada services yang tidak dibenarkan',
+              'AWS Acceptable Use Policy (AUP) = dokumen yang define apa yang boleh dan tak boleh buat kat AWS',
+            ],
+            docs: [{ label: 'AWS Penetration Testing', url: 'https://aws.amazon.com/security/penetration-testing/' }],
+            keywords: ['penetration testing', 'pentest', 'security assessment', 'AUP', 'Acceptable Use Policy', 'no prior approval', '8 services'],
+          },
         ],
       },
       {
@@ -429,13 +446,15 @@ export const domains: DomainData[] = [
             tips: [
               'NAT GW DUDUK DALAM PUBLIC SUBNET — bukan private! Ini exam trap paling common',
               'Private subnet route: 0.0.0.0/0 → nat-xxx. Public subnet route: 0.0.0.0/0 → igw-xxx',
+              'IGW MESTI attached ke VPC — tanpa IGW, NAT GW tak boleh hantar traffic ke internet walaupun route betul',
               'NAT GW ada Elastic IP. Kena bayar per hour + per GB processed',
               'NAT Instance (lama, EC2 manual) vs NAT Gateway (managed, auto-scale, recommended)',
+              'Nak SSH ke private instance? Tak boleh direct dari internet — guna bastion host (EC2 dalam public subnet)',
             ],
             docs: [
               { label: 'NAT Gateways', url: 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html' },
             ],
-            keywords: ['NAT', 'outbound only', 'private subnet', 'Elastic IP', 'paid', 'no inbound'],
+            keywords: ['NAT', 'outbound only', 'private subnet', 'Elastic IP', 'paid', 'no inbound', 'bastion host'],
           },
           {
             shortName: 'Route Tables',
