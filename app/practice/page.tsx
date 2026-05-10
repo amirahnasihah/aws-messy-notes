@@ -51,6 +51,13 @@ export default function PracticePage() {
     }
   }, [currentIndex])
 
+  const handleJump = useCallback((i: number) => {
+    setCurrentIndex(i)
+    setSelected(null)
+    setQuizState('question')
+    setFinished(false)
+  }, [])
+
   const handleRestart = useCallback(() => {
     setCurrentIndex(0)
     setSelected(null)
@@ -115,6 +122,7 @@ export default function PracticePage() {
             score={score}
             onSelect={handleSelect}
             onNext={handleNext}
+            onJump={handleJump}
           />
         )}
       </main>
@@ -122,8 +130,55 @@ export default function PracticePage() {
   )
 }
 
+function QuestionGrid({
+  current,
+  total,
+  onSelect,
+  onClose,
+}: {
+  current: number
+  total: number
+  onSelect: (i: number) => void
+  onClose: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-24">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-aws-card border border-aws-border rounded-2xl p-4 w-full max-w-[720px] shadow-2xl">
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-space-mono text-[0.65rem] text-aws-muted uppercase tracking-widest">
+            Jump to question
+          </span>
+          <button
+            onClick={onClose}
+            className="font-space-mono text-xs text-aws-muted hover:text-aws-text transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="grid grid-cols-8 gap-1.5 max-h-52 overflow-y-auto pr-1">
+          {Array.from({ length: total }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => { onSelect(i); onClose() }}
+              className={`font-space-mono text-[0.65rem] py-1.5 rounded-lg border transition-all duration-150 ${
+                i === current
+                  ? 'bg-c1/20 border-c1/40 text-c1 font-bold'
+                  : 'bg-white/3 border-aws-border/40 text-aws-muted hover:bg-white/8 hover:text-aws-text'
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ReviewMode() {
   const [index, setIndex] = useState(0)
+  const [showPicker, setShowPicker] = useState(false)
   const total = practiceQuestions.length
   const q = practiceQuestions[index]
 
@@ -186,9 +241,9 @@ function ReviewMode() {
       <ExplanationBlock q={q} selected={q.correctId} isCorrect={true} reviewMode={true} />
       <div className="h-24" />
 
-      {/* floating prev / next bar */}
+      {/* floating nav bar */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-[720px] px-4 z-50">
-        <div className="flex gap-3 bg-aws-card/80 backdrop-blur-md border border-aws-border rounded-2xl p-2 shadow-xl">
+        <div className="flex gap-2 bg-aws-card/80 backdrop-blur-md border border-aws-border rounded-2xl p-2 shadow-xl">
           <button
             onClick={() => setIndex((i) => i - 1)}
             disabled={index === 0}
@@ -196,9 +251,13 @@ function ReviewMode() {
           >
             ← Prev
           </button>
-          <span className="font-space-mono text-[0.65rem] text-aws-muted self-center px-2 whitespace-nowrap">
+          <button
+            onClick={() => setShowPicker(true)}
+            className="px-4 py-2.5 rounded-xl font-space-mono text-[0.65rem] font-bold border border-aws-border/50 text-aws-muted hover:text-aws-text hover:bg-white/6 transition-all duration-150 whitespace-nowrap"
+            title="Jump to question"
+          >
             {index + 1} / {total}
-          </span>
+          </button>
           <button
             onClick={() => setIndex((i) => i + 1)}
             disabled={index + 1 >= total}
@@ -208,6 +267,15 @@ function ReviewMode() {
           </button>
         </div>
       </div>
+
+      {showPicker && (
+        <QuestionGrid
+          current={index}
+          total={total}
+          onSelect={setIndex}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
     </div>
   )
 }
@@ -222,6 +290,7 @@ function QuestionCard({
   score,
   onSelect,
   onNext,
+  onJump,
 }: {
   q: PracticeQuestion
   index: number
@@ -232,7 +301,10 @@ function QuestionCard({
   score: { correct: number; total: number }
   onSelect: (id: string) => void
   onNext: () => void
+  onJump: (i: number) => void
 }) {
+  const [showPicker, setShowPicker] = useState(false)
+
   return (
     <div>
       {/* progress bar */}
@@ -243,9 +315,13 @@ function QuestionCard({
             style={{ width: `${((index + 1) / total) * 100}%` }}
           />
         </div>
-        <span className="font-space-mono text-[0.65rem] text-aws-muted whitespace-nowrap">
+        <button
+          onClick={() => setShowPicker(true)}
+          className="font-space-mono text-[0.65rem] text-aws-muted hover:text-aws-text whitespace-nowrap transition-colors"
+          title="Jump to question"
+        >
           {index + 1} / {total}
-        </span>
+        </button>
         <span className="font-space-mono text-[0.65rem] text-emerald-400 whitespace-nowrap">
           {score.correct}/{score.total} correct
         </span>
@@ -298,6 +374,15 @@ function QuestionCard({
         >
           {index + 1 >= practiceQuestions.length ? 'See Results →' : 'Next Question →'}
         </button>
+      )}
+
+      {showPicker && (
+        <QuestionGrid
+          current={index}
+          total={total}
+          onSelect={(i) => { onJump(i); setShowPicker(false) }}
+          onClose={() => setShowPicker(false)}
+        />
       )}
     </div>
   )

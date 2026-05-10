@@ -637,7 +637,7 @@ export const practiceQuestions: PracticeQuestion[] = [
       "The AWS Acceptable Use Policy describes permitted and prohibited behavior on AWS and includes descriptions of prohibited security violations and network abuse. According to the policy, what is AWS's position on penetration testing?",
     options: [
       { id: 'a', text: 'AWS do not allow any form of penetration testing' },
-      { id: 'b', text: 'AWS allow penetration testing by customers on their own VPC resources only' },
+      { id: 'b', text: 'AWS allow penetration testing by customers on their own VPC resources' },
       { id: 'c', text: 'AWS allow penetration for some resources without prior authorization' },
       { id: 'd', text: 'AWS allow penetration testing for all resources' },
     ],
