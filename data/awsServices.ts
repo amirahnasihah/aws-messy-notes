@@ -126,6 +126,8 @@ export const domains: DomainData[] = [
             contohGuna: 'Security team nak test EC2 instances atau RDS databases untuk vulnerabilities — dibenarkan tanpa minta izin AWS terlebih dahulu.',
             scenario: '"AWS Acceptable Use Policy", "penetration testing position", "security assessments on AWS" → AWS allow for SOME resources WITHOUT prior authorization (not all, not none). 8 permitted services include EC2, RDS, CloudFront, Aurora, API Gateways, Lambda, Lightsail, Elastic Beanstalk.',
             keywords: ['penetration testing', 'security assessment', 'Acceptable Use Policy', 'AUP', 'no prior approval', '8 services', 'prohibited activities'],
+          },
+          {
             shortName: 'Cognito',
             fullName: 'Amazon Cognito',
             ingat: '"Login untuk user apps — User Pool = siapa kau, Identity Pool = boleh buat apa"',
