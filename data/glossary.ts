@@ -90,4 +90,11 @@ export const glossary: Record<string, string> = {
   // Architecture patterns
   'stateful': 'Remembers connection state — allowed return traffic is automatically permitted without an explicit rule (like Security Groups)',
   'stateless': 'Does not track connections — every packet is evaluated independently against rules, both directions need rules (like NACLs)',
+
+  // Security concepts & policy
+  'bastion host': 'EC2 in a public subnet used as the only SSH/RDP entry point into private subnet instances — connect to bastion first, then hop to private instances',
+  'jump host': 'Another name for a bastion host — a hardened EC2 in a public subnet that you jump through to reach private subnet instances',
+  'Elastic IP': 'Static public IPv4 address allocated to your AWS account — stays fixed until released, survives instance stop/start; NAT Gateway requires one',
+  'penetration testing': 'Authorised simulated attack to find vulnerabilities — AWS allows pentest on 8 services (EC2, RDS, CloudFront, Aurora, API GW, Lambda, Lightsail, Elastic Beanstalk) without prior approval',
+  'AUP': 'AWS Acceptable Use Policy — defines what is permitted and prohibited on AWS infrastructure, including security testing rules',
 }

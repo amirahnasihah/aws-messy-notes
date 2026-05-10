@@ -602,6 +602,58 @@ export const practiceQuestions: PracticeQuestion[] = [
     reference: 'https://aws.amazon.com/batch/',
     keywords: ['AWS Batch', 'batch computing', 'managed service', 'EC2 fleet', 'job scheduling', 'replace third-party'],
   },
+  {
+    id: 'q-nat-gateway-private-outbound',
+    domain: 'd2',
+    domainLabel: 'Design Resilient Architectures',
+    difficulty: 'Medium',
+    scenario:
+      'An application running in a private subnet of an Amazon VPC must have outbound internet access for downloading updates. The Solutions Architect does not want the application exposed to inbound connection attempts. Which steps should be taken?',
+    options: [
+      { id: 'a', text: 'Create a NAT gateway and attach an internet gateway to the VPC' },
+      { id: 'b', text: 'Attach an internet gateway to the private subnet and create a NAT gateway' },
+      { id: 'c', text: 'Create a NAT gateway but do not attach an internet gateway to the VPC' },
+      { id: 'd', text: 'Attach an internet gateway to the VPC but do not create a NAT gateway' },
+    ],
+    correctId: 'a',
+    explanation: {
+      correct:
+        'NAT Gateway membolehkan instances dalam private subnet buat outbound connections ke internet tanpa terdedah kepada inbound. NAT GW dicipta dalam PUBLIC subnet (bukan private) dan Internet Gateway MESTI di-attach ke VPC — tanpa IGW, tiada outbound traffic yang boleh keluar langsung walaupun NAT GW ada. Private subnet route table: 0.0.0.0/0 → nat-gateway-id. Public subnet route table: 0.0.0.0/0 → igw-id.',
+      incorrects: {
+        b: 'IGW di-attach ke VPC, bukan ke subnet. Salah faham ini common dalam exam — subnet tidak "attach" ke IGW, tapi subnet route table menghala traffic ke IGW yang attached ke VPC.',
+        c: 'Tanpa IGW attached ke VPC, tiada outbound internet traffic yang berjaya. NAT GW bergantung kepada IGW untuk hantar traffic keluar ke internet. Kedua-duanya diperlukan.',
+        d: 'Tanpa NAT Gateway, instances dalam private subnet tidak boleh reach internet langsung — tiada mekanisme untuk translate Private IP ke public address. IGW sahaja tidak cukup untuk private subnet.',
+      },
+    },
+    reference: 'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html',
+    keywords: ['NAT Gateway', 'private subnet', 'outbound internet', 'IGW', 'internet gateway', 'route table', 'no inbound'],
+  },
+  {
+    id: 'q-aws-pentest-policy',
+    domain: 'd1',
+    domainLabel: 'Design Secure Applications and Architectures',
+    difficulty: 'Easy',
+    scenario:
+      "The AWS Acceptable Use Policy describes permitted and prohibited behavior on AWS and includes descriptions of prohibited security violations and network abuse. According to the policy, what is AWS's position on penetration testing?",
+    options: [
+      { id: 'a', text: 'AWS do not allow any form of penetration testing' },
+      { id: 'b', text: 'AWS allow penetration testing by customers on their own VPC resources only' },
+      { id: 'c', text: 'AWS allow penetration for some resources without prior authorization' },
+      { id: 'd', text: 'AWS allow penetration testing for all resources' },
+    ],
+    correctId: 'c',
+    explanation: {
+      correct:
+        'AWS membenarkan customers menjalankan security assessments dan penetration tests terhadap AWS infrastructure mereka TANPA kelulusan awal untuk 8 services yang dibenarkan: EC2, RDS, CloudFront, Aurora, API Gateway, Lambda, Lightsail, dan Elastic Beanstalk. Ini bukan semua resources, dan bukan tiada langsung — 8 services spesifik sahaja yang boleh ditest tanpa prior approval.',
+      incorrects: {
+        a: 'Tidak tepat. AWS memang membenarkan penetration testing — hanya perlu follow guidelines dan limitasi yang ditetapkan. Mengatakan "tidak benarkan langsung" adalah salah.',
+        b: 'Terlalu spesifik dan tidak tepat. AWS tidak menyatakan "VPC resources only" — ia berdasarkan senarai 8 services spesifik, bukan berdasarkan samada ia dalam VPC atau tidak.',
+        d: 'Tidak tepat. AWS tidak membenarkan pentest untuk SEMUA resources. Ada services dan aktiviti tertentu yang dilarang seperti DoS/DDoS simulation, DNS zone walking, dan port flooding.',
+      },
+    },
+    reference: 'https://aws.amazon.com/security/penetration-testing/',
+    keywords: ['penetration testing', 'pentest', 'AUP', 'Acceptable Use Policy', 'security assessment', 'no prior approval', '8 services'],
+  },
 
   // ── D1 · IAM & Identity ──────────────────────────────────────────────────
   {
