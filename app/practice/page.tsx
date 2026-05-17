@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import Nav from '@/components/Nav'
+import SiteFooter from '@/components/SiteFooter'
 import { practiceQuestions, PracticeQuestion } from '@/data/practiceQuestions'
 
 const domainColors: Record<string, string> = {
@@ -125,6 +126,8 @@ export default function PracticePage() {
             onJump={handleJump}
           />
         )}
+
+        <SiteFooter tagline="AWS SAA-C03 · Practice Questions · Good luck! 💪" />
       </main>
     </>
   )

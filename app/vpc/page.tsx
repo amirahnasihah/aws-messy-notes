@@ -1,5 +1,6 @@
 import Nav from '@/components/Nav'
 import GlossaryText from '@/components/GlossaryText'
+import SiteFooter from '@/components/SiteFooter'
 
 export const metadata = {
   title: 'AWS SAA-C03 — VPC Study Guide',
@@ -782,9 +783,7 @@ export default function VpcPage() {
           </div>
         </section>
 
-        <footer className="text-center font-space-mono text-[0.65rem] text-aws-muted pt-6 border-t border-aws-border">
-          AWS SAA-C03 · VPC Study Guide · Semoga faham dan boleh score! 💪
-        </footer>
+        <SiteFooter tagline="AWS SAA-C03 · VPC Study Guide · Semoga faham dan boleh score! 💪" />
 
       </main>
     </>

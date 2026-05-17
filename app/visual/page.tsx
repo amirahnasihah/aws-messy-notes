@@ -12,6 +12,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import Nav from '@/components/Nav'
+import SiteFooter from '@/components/SiteFooter'
 import { architectures, Architecture } from '@/data/architectures'
 import { ArchNode, GroupNode, ArchColor } from '@/components/visual/ArchNode'
 
@@ -80,6 +81,8 @@ export default function VisualPage() {
 
         {/* diagram */}
         <DiagramPanel arch={active} key={active.id} />
+
+        <SiteFooter tagline="AWS SAA-C03 · Architecture Visuals · Good luck! 💪" />
       </main>
     </>
   )

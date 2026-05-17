@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { navDomains } from '@/data/awsServices'
-import SearchModal from './SearchModal'
+import FloatingSearch from './FloatingSearch'
 
 interface NavProps {
   activePage?: 'cheatsheet' | 'learn' | 'practice' | 'visual' | 'vpc'
@@ -11,19 +11,6 @@ interface NavProps {
 
 export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-
-  // ⌘K / Ctrl+K global shortcut
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setSearchOpen(true)
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [])
 
   return (
     <>
@@ -55,34 +42,12 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
             ))}
           </div>
         ))}
-
-        {/* search trigger */}
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="ml-auto shrink-0 flex items-center gap-2 font-space-mono text-[0.6rem] text-aws-muted border border-aws-border/60 rounded-lg px-3 py-1.5 hover:border-aws-border hover:text-aws-text transition-all duration-150 hover:bg-white/4 whitespace-nowrap"
-        >
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="6.5" cy="6.5" r="4.5" />
-            <path d="M14 14l-3-3" />
-          </svg>
-          Search
-          <kbd className="text-[0.5rem] border border-aws-border/60 rounded px-1 py-0.5">⌘K</kbd>
-        </button>
       </nav>
 
       {/* ── Mobile nav ── */}
       <nav className="md:hidden fixed top-0 left-0 right-0 h-14 z-50 flex items-center justify-between px-4 bg-aws-bg/95 backdrop-blur-md border-b border-aws-border">
         <span className="font-space-mono text-[0.7rem] font-bold text-c1">AWS SAA-C03</span>
-        <div className="flex items-center gap-1">
-          {/* search icon */}
-          <button onClick={() => setSearchOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-2" aria-label="Search">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <circle cx="7.5" cy="7.5" r="5.5" />
-              <path d="M16 16l-3.5-3.5" />
-            </svg>
-          </button>
-
-          {/* hamburger */}
+        <div>
           <button onClick={() => setMenuOpen(true)} className="text-aws-muted hover:text-aws-text transition-colors p-2" aria-label="Open menu">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <rect y="3" width="20" height="2" rx="1" />
@@ -152,8 +117,7 @@ export default function Nav({ activePage = 'cheatsheet' }: NavProps) {
         </div>
       )}
 
-      {/* ── Search modal ── */}
-      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <FloatingSearch />
     </>
   )
 }

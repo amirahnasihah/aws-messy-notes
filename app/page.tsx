@@ -3,6 +3,7 @@ import Nav from '@/components/Nav'
 import DomainHeader from '@/components/DomainHeader'
 import Section from '@/components/Section'
 import Link from 'next/link'
+import SiteFooter from '@/components/SiteFooter'
 
 export default function Home() {
   return (
@@ -36,14 +37,16 @@ export default function Home() {
           </div>
         ))}
 
-        <footer className="text-center font-space-mono text-[0.65rem] text-aws-muted pt-6 border-t border-aws-border space-y-2">
-          <p>AWS SAA-C03 · All 4 Domains · Study Reference · Good luck! 💪</p>
-          <p>
-            <Link href="/learn" className="text-c1 hover:text-aws-text transition-colors underline underline-offset-2">
-              → Deep Notes: detailed explanations
-            </Link>
-          </p>
-        </footer>
+        <SiteFooter
+          tagline="AWS SAA-C03 · All 4 Domains · Study Reference · Good luck! 💪"
+          extra={
+            <p>
+              <Link href="/learn" className="text-c1 hover:text-aws-text transition-colors underline underline-offset-2">
+                → Deep Notes: detailed explanations
+              </Link>
+            </p>
+          }
+        />
       </main>
     </>
   )

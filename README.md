@@ -30,8 +30,7 @@ bun dev
 ## Deploy
 
 ```bash
-bun run deploy   # next build + wrangler pages deploy
-```
+bun run deploy   # next build + wrangler pages deploy ```
 
 ## Data files
 

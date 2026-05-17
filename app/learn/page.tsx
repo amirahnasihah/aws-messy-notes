@@ -2,6 +2,7 @@ import { domains } from '@/data/awsServices'
 import Nav from '@/components/Nav'
 import DomainHeader from '@/components/DomainHeader'
 import LearnCard from '@/components/LearnCard'
+import SiteFooter from '@/components/SiteFooter'
 import { categoryStyles } from '@/data/awsServices'
 
 export const metadata = {
@@ -69,9 +70,7 @@ export default function LearnPage() {
           </div>
         ))}
 
-        <footer className="text-center font-space-mono text-[0.65rem] text-aws-muted pt-6 border-t border-aws-border">
-          AWS SAA-C03 · All 4 Domains · Deep Notes · Good luck! 💪
-        </footer>
+        <SiteFooter tagline="AWS SAA-C03 · All 4 Domains · Deep Notes · Good luck! 💪" />
       </main>
     </>
   )
